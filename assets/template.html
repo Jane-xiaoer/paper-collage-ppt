@@ -11,8 +11,8 @@
 /* ============================================================
    PAPER COLLAGE DECK · 剪纸拼贴 PPT 模板
    工艺:手剪轮廓纸片 / 撕边色块 / 撕纸山景 / 剪贴字 / 胶带订书钉 / 定格入场
-   配色:8 套内置在 body.t1..t8,改 <body class="tN"> 定初始主题(见 themes.md);面板带强调色滑杆
-   深色 field 主题(t4/t5/t8)由换肤脚本自动加 dark-field
+   配色:14 套内置在 body.t1..t14,改 <body class="tN"> 定初始主题(见 themes.md);面板带强调色滑杆
+   深色 field 主题(t4/t5/t8/t10)由换肤脚本自动加 dark-field
    ============================================================ */
 :root{
   /* —— 主题色(默认:马蒂斯剪纸)—— */
@@ -44,8 +44,8 @@
 .cut3{--cut:polygon(0.4% 2.6%,30% 0.8%,63% 2.2%,99.6% 0.4%,98.5% 30%,99.8% 62%,98.7% 97.8%,70% 99.7%,35% 98.1%,0.6% 99.5%,2% 68%,0.2% 36%)}
 
 /* ============================================================
-   8 套经典配色(艺术史提炼)· 换肤=换 body 的 tN class
-   深色 field 主题(t4/t5/t8)由换肤脚本自动追加 dark-field
+   14 套经典配色(艺术史提炼)· 换肤=换 body 的 tN class
+   深色 field 主题(t4/t5/t8/t10)由换肤脚本自动追加 dark-field
    ============================================================ */
 body.t1{--field:#F2ECDF;--field-deep:#E6DCC8;--paper:#FFFDF6;--ink:#22283A;--ink-soft:#6B7080;
   --accent:#2E5FB7;--accent-rgb:46,95,183;--accent-paper:#F0C9A8;--kraft:#6FA07C;--shadow-rgb:40,44,58}
@@ -66,6 +66,19 @@ body.t7{--field:#E7EBE1;--field-deep:#D7DECF;--paper:#FBFCF8;--ink:#2C332B;--ink
 body.t8{--field:#23252E;--field-deep:#1A1C24;--paper:#F1EEE4;--ink:#26282F;--ink-soft:#6A6E7A;
   --accent:#63C7AE;--accent-rgb:99,199,174;--accent-paper:#BFE7DC;--kraft:#4A4E5C;--shadow-rgb:0,0,0;
   --field-text:#EDEBE2;--field-text-soft:rgba(237,235,226,.68)}
+body.t9{--field:#DCE5DE;--field-deep:#C9D6CB;--paper:#FBFBF5;--ink:#39434A;--ink-soft:#7B878C;
+  --accent:#7C96C5;--accent-rgb:124,150,197;--accent-paper:#EBD3DE;--kraft:#93AE9A;--shadow-rgb:57,67,72}
+body.t10{--field:#26365E;--field-deep:#1C2947;--paper:#F3EDD8;--ink:#1B2440;--ink-soft:#66707F;
+  --accent:#F0C33C;--accent-rgb:240,195,60;--accent-paper:#F6E3A8;--kraft:#6B88C4;--shadow-rgb:8,13,32;
+  --field-text:#F3EDD8;--field-text-soft:rgba(243,237,216,.72)}
+body.t11{--field:#F1E9D6;--field-deep:#E3D7BA;--paper:#FAF5E8;--ink:#1F3A54;--ink-soft:#5E6E7E;
+  --accent:#275B87;--accent-rgb:39,91,135;--accent-paper:#BCD3E2;--kraft:#C4A46B;--shadow-rgb:31,58,84}
+body.t12{--field:#E3DDD4;--field-deep:#D4CCC0;--paper:#F7F4EE;--ink:#4A453E;--ink-soft:#8C857B;
+  --accent:#AD7E63;--accent-rgb:173,126,99;--accent-paper:#E3CFC1;--kraft:#9DA48F;--shadow-rgb:74,69,62}
+body.t13{--field:#E9D6B8;--field-deep:#DCC49C;--paper:#F8EFDC;--ink:#4A3226;--ink-soft:#8A6F55;
+  --accent:#B65C3F;--accent-rgb:182,92,63;--accent-paper:#E5C3A8;--kraft:#4E8D7C;--shadow-rgb:74,50,38}
+body.t14{--field:#F7E14E;--field-deep:#EBD22F;--paper:#FFFFFF;--ink:#17171B;--ink-soft:#55554E;
+  --accent:#E7318A;--accent-rgb:231,49,138;--accent-paper:#F9C0DC;--kraft:#37B6E2;--shadow-rgb:40,40,20}
 
 *{margin:0;padding:0;box-sizing:border-box}
 html,body{height:100%;overflow:hidden;background:var(--field)}
@@ -542,6 +555,12 @@ body.dark-field #pageno{color:var(--field-text-soft,rgba(244,242,234,.6))}
     <button data-t="t6"><span class="sw"><i style="background:#F3F2EE"></i><i style="background:#191919"></i><i style="background:#E43225"></i></span>报纸×印刷红</button>
     <button data-t="t7"><span class="sw"><i style="background:#E7EBE1"></i><i style="background:#3F6D4E"></i><i style="background:#A8B49A"></i></span>苔绿清晨</button>
     <button data-t="t8"><span class="sw"><i style="background:#23252E"></i><i style="background:#F1EEE4"></i><i style="background:#63C7AE"></i></span>午夜墨×薄荷</button>
+    <button data-t="t9"><span class="sw"><i style="background:#DCE5DE"></i><i style="background:#7C96C5"></i><i style="background:#EBD3DE"></i></span>莫奈睡莲</button>
+    <button data-t="t10"><span class="sw"><i style="background:#26365E"></i><i style="background:#F0C33C"></i><i style="background:#6B88C4"></i></span>梵高星夜</button>
+    <button data-t="t11"><span class="sw"><i style="background:#F1E9D6"></i><i style="background:#275B87"></i><i style="background:#C4A46B"></i></span>北斋浪</button>
+    <button data-t="t12"><span class="sw"><i style="background:#E3DDD4"></i><i style="background:#AD7E63"></i><i style="background:#9DA48F"></i></span>莫兰迪</button>
+    <button data-t="t13"><span class="sw"><i style="background:#E9D6B8"></i><i style="background:#B65C3F"></i><i style="background:#4E8D7C"></i></span>敦煌壁画</button>
+    <button data-t="t14"><span class="sw"><i style="background:#F7E14E"></i><i style="background:#E7318A"></i><i style="background:#37B6E2"></i></span>波普艺术</button>
   </div>
   <label class="sb-hue">强调色微调<input id="sbhue" type="range" min="0" max="360" step="1"></label>
 </div>
@@ -597,9 +616,9 @@ body.dark-field #pageno{color:var(--field-text-soft,rgba(244,242,234,.6))}
   go(isNaN(h)?0:h-1);
 })();
 
-/* ============ 内置换肤(8 套经典配色 + 强调色滑杆,观众可切) ============ */
+/* ============ 内置换肤(14 套经典配色 + 强调色滑杆,观众可切) ============ */
 (function(){
-  const DARK=new Set(['t4','t5','t8']);
+  const DARK=new Set(['t4','t5','t8','t10']);
   const bar=document.getElementById('skinbar');
   const hue=document.getElementById('sbhue');
   const authorDefault=document.body.className.match(/t\d+/)?.[0]||'t1';
@@ -633,7 +652,7 @@ body.dark-field #pageno{color:var(--field-text-soft,rgba(244,242,234,.6))}
   hue.addEventListener('input',()=>{applyHue(+hue.value);try{localStorage.setItem(KEY+':hue:'+cur,hue.value)}catch(e){}});
   bar.querySelectorAll('button').forEach(b=>b.addEventListener('click',()=>setTheme(b.dataset.t)));
   document.getElementById('sbfold').addEventListener('click',()=>bar.classList.toggle('folded'));
-  addEventListener('keydown',e=>{if(e.key>='1'&&e.key<='8')setTheme('t'+e.key)});
+  addEventListener('keydown',e=>{if(e.key>='1'&&e.key<='9')setTheme('t'+e.key)});
   let saved=null;try{saved=localStorage.getItem(KEY)}catch(e){}
   setTheme(saved&&document.querySelector('[data-t='+saved+']')?saved:authorDefault);
 })();

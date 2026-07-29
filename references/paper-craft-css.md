@@ -21,7 +21,7 @@ template.html 的剪纸感来自一套固定「工艺」。v2 的核心升级:**
 | 纸浆斑驳 | `body::before` 大尺度低频 turbulence + 四角轻晕影(纸的色调不均匀) | 全局 |
 | 纸片纤维方向 | `.piece::after` 细噪点 + 93° 隐约纤维纹;`::before` 加 inset 边缘吃光 | 所有纸片 |
 | 撕纸块纹理 | `.torn-strip/.torn-b/.hill` 的 `::after` 纸浆噪点 | 撕边色块/山景 |
-| 内置换肤 | `body.t1..t8` 主题类 + `#skinbar` 面板(观众可切,localStorage 记住;深色主题 JS 自动加 dark-field)+ **强调色滑杆**(只改 accent 色相,S/L 锁主题原值,按主题记忆;Jane 2026-07-28 终版拍板保留) | 全局 |
+| 内置换肤 | `body.t1..t14` 主题类 + `#skinbar` 面板(观众可切,localStorage 记住;深色主题 JS 自动加 dark-field)+ **强调色滑杆**(只改 accent 色相,S/L 锁主题原值,按主题记忆;Jane 2026-07-28 终版拍板保留) | 全局 |
 | 定格入场 | `steps(4/5)` 逐格「贴」上来 | `[data-drop]` |
 
 ## 六条不许动的工艺铁律

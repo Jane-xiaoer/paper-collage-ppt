@@ -1,6 +1,6 @@
 ---
 name: paper-collage-ppt
-description: 生成「剪纸拼贴 / 手工纸艺」风格的横向翻页网页 PPT(单 HTML 文件):8 套艺术史经典配色(马蒂斯/蒙德里安/包豪斯/大红剪纸/克莱因/报纸红/苔绿/午夜薄荷)+ deck 内置一键换肤面板 + 强调色滑杆 + 10 种布局(剪贴字/撕纸山景/胶带订书钉工艺),文字全部真 HTML 永不乱码,插画用 nano-banana「实拍纸艺 diorama」配方生成,可一键导出 16:9 PPTX。当用户说"剪纸 PPT""剪纸风演示""拼贴风 PPT""纸艺幻灯片""paper collage deck""用剪纸风格做个分享"时使用。风格体系继承 paper-collage-ad(广告视频版)。
+description: 生成「剪纸拼贴 / 手工纸艺」风格的横向翻页网页 PPT(单 HTML 文件):14 套艺术史经典配色(马蒂斯/蒙德里安/包豪斯/大红剪纸/克莱因/报纸红/苔绿/午夜薄荷/睡莲/星夜/北斋浪/莫兰迪/敦煌/波普)+ deck 内置一键换肤面板 + 强调色滑杆 + 10 种布局(剪贴字/撕纸山景/胶带订书钉工艺),文字全部真 HTML 永不乱码,插画用 nano-banana「实拍纸艺 diorama」配方生成,可一键导出 16:9 PPTX。当用户说"剪纸 PPT""剪纸风演示""拼贴风 PPT""纸艺幻灯片""paper collage deck""用剪纸风格做个分享"时使用。风格体系继承 paper-collage-ad(广告视频版)。
 ---
 
 # Paper Collage PPT · 剪纸拼贴演示
@@ -24,9 +24,9 @@ description: 生成「剪纸拼贴 / 手工纸艺」风格的横向翻页网页 
 
 按叙事弧搭骨架:钩子 → 定调 → 主体 → 转折 → 收束(页数分配见 `references/layouts.md` 尾部)。同时列出**每页的底色节奏**(field / deep / ink),规则在 layouts.md「页面节奏规划」——无连续 3 页同底色,每 3-4 页一个深底呼吸页。大纲 + 节奏表先给用户确认再动手写 HTML。
 
-### Step 3 · 定初始主题(8 套艺术史配色,内置换肤+滑杆)
+### Step 3 · 定初始主题(14 套艺术史配色,内置换肤+滑杆)
 
-读 `references/themes.md` 总表,按内容气质推荐**初始主题**,把模板 `<body class="tN">` 换成对应编号即可——8 套变量和左下角「✂ 风格」换肤面板都内置在模板里,观众/用户随时一键切换(深色主题的 dark-field 由脚本自动处理)。**不接受自定义 hex、不许混搭**;用户给参考图 → 按图逐要素提色加成 t15+(方法在 themes.md 开头)。
+读 `references/themes.md` 总表,按内容气质推荐**初始主题**,把模板 `<body class="tN">` 换成对应编号即可——14 套变量和左下角「✂ 风格」换肤面板都内置在模板里,观众/用户随时一键切换(深色主题的 dark-field 由脚本自动处理)。**不接受自定义 hex、不许混搭**;用户给参考图 → 按图逐要素提色加成 t15+(方法在 themes.md 开头)。
 
 ### Step 4 · 拷模板 + 填布局
 
@@ -78,7 +78,7 @@ paper-collage-ppt/
 ├── scripts/
 │   └── export-pptx.py            ← HTML deck → 16:9 PPTX(逐页截图,可 --theme 指定配色)
 └── references/
-    ├── themes.md                 ← 8 套艺术史配色总表 + 换肤/滑杆机制 + 插画调色板联动表
+    ├── themes.md                 ← 14 套艺术史配色总表 + 换肤/滑杆机制 + 插画调色板联动表
     ├── layouts.md                ← 10 种布局骨架 + 节奏规划 + 手工感五铁律
     ├── paper-craft-css.md        ← 剪纸 CSS 工艺分解(v2) + 六条不许动的铁律
     ├── image-prompts.md          ← nano 纸艺 diorama 配方(PPT 版,强制 no text)
