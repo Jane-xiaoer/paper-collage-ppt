@@ -1,0 +1,22 @@
+{
+  "name": "paper-collage",
+  "description": "剪纸拼贴风·真纸资产版:实拍卡纸标题条/面板(微信CDN)+ 马克笔垫色 + 撕纸分隔。配 paper-collage 工作流使用。",
+  "container_style": "max-width:677px; margin:0 auto; padding:20px 14px; background:#EAE2D5; font-family:-apple-system,BlinkMacSystemFont,'Helvetica Neue','PingFang SC','Microsoft YaHei',sans-serif;",
+  "tags": {
+    "h1": "display:inline-block; background-image:url({{asset:bar-ink}}); background-size:100% 100%; color:#F5EFE2; font-size:19px; font-weight:900; letter-spacing:3px; line-height:1.5; padding:12px 24px; margin:36px 0 18px; transform:rotate(-1deg);",
+    "h2": "display:inline-block; background-image:url({{asset:bar-ink}}); background-size:100% 100%; color:#F5EFE2; font-size:17px; font-weight:900; letter-spacing:3px; line-height:1.5; padding:11px 22px; margin:36px 0 16px; transform:rotate(-1deg);",
+    "h3": "display:inline-block; background-image:url({{asset:bar-cream}}); background-size:100% 100%; color:#201C18; font-size:16px; font-weight:700; line-height:1.5; padding:9px 18px; margin:28px 0 14px; transform:rotate(0.5deg);",
+    "h4": "font-size:15px; font-weight:700; color:#6A6157; letter-spacing:1px; margin:22px 0 10px;",
+    "p": "font-size:15px; line-height:1.9; color:#3E362C; margin:16px 0; letter-spacing:0.3px; text-align:justify; word-break:break-word;",
+    "blockquote": "background-image:url({{asset:panel-cream}}); background-size:100% 100%; border:none; padding:26px 26px; margin:26px 6px; color:#5C5344; font-size:15px; line-height:1.85; transform:rotate(-0.5deg);",
+    "strong": "background:linear-gradient(to top,#F2DE9F 36%,rgba(255,255,255,0) 36%); color:#201C18; font-weight:700; padding:0 2px;",
+    "em": "color:#D94F2B; font-style:normal; font-weight:600;",
+    "ul": "margin:16px 0; padding-left:24px;",
+    "ol": "margin:16px 0; padding-left:24px;",
+    "li": "font-size:15px; line-height:1.9; color:#3E362C; margin:6px 0;",
+    "a": "color:#D94F2B; text-decoration:none; border-bottom:1px dashed #D94F2B;",
+    "code": "background:#EDE4D3; color:#8A4B2E; padding:2px 6px; border-radius:3px; font-size:13px; font-family:Menlo,Consolas,monospace;",
+    "pre": "background:#201C18; color:#F0E9DB; padding:16px; overflow-x:auto; font-size:13px; line-height:1.7; box-shadow:3px 5px 12px rgba(50,43,32,0.25);",
+    "hr": "border:0; border-top:2px dashed #BFA46F; margin:36px 12px;"
+  }
+}

@@ -24,6 +24,10 @@ references/       ← 配色 / 布局 / 工艺 / 插画配方 / 检查清单
 scripts/export-pptx.py ← HTML → 16:9 PPTX
 ```
 
+## 公众号工作流(v1.2 新增)
+
+同一套剪纸语言的公众号排版+配图:两套主题 JSON(`assets/wechat-themes/`,暖色浅底 / **艺术史海报深色版**:深炭底+米卡宋体撕边标题条+藏蓝芥黄砖红)、真纸组件库(`references/wechat-components.md`)、正文图上传脚本(`scripts/upload-body-images.py`)。主题里的 `{{asset:*}}` 占位符用你自己的公众号 CDN 资产替换(生成管线见组件库文档,素材源在姊妹仓 [paper-collage-cardstock](https://github.com/Jane-xiaoer/paper-collage-cardstock))。
+
 ## 血统
 
 视觉体系来自 [paper-collage-ad](https://github.com/Jane-xiaoer/paper-collage-ad-codex)(剪纸拼贴广告视频 skill)的实战配方。两条硬教训直接继承:AI 渲染文字必乱码,精确内容一律真 HTML;工艺正确 ≠ 好看,美感层绝不能省。

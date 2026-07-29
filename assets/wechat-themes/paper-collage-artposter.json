@@ -1,0 +1,22 @@
+{
+  "name": "paper-collage-artposter",
+  "description": "剪纸拼贴·艺术史海报版:深炭底 + 米卡撕边标题条(宋体) + 藏蓝/芥黄/砖红真纸件。Jane 审美专题海报同款语言,配 paper-collage 工作流 B。",
+  "container_style": "max-width:677px; margin:0 auto; padding:24px 14px; background:#2A2A28; font-family:-apple-system,BlinkMacSystemFont,'Helvetica Neue','PingFang SC','Microsoft YaHei',sans-serif;",
+  "tags": {
+    "h1": "display:inline-block; background-image:url({{asset:bar-cream}}); background-size:100% 100%; color:#26221C; font-family:STSongti-SC-Black,'Songti SC',STSong,'Noto Serif CJK SC',serif; font-size:20px; font-weight:900; letter-spacing:2px; line-height:1.5; padding:13px 24px; margin:36px 0 18px; transform:rotate(-1deg);",
+    "h2": "display:inline-block; background-image:url({{asset:bar-cream}}); background-size:100% 100%; color:#26221C; font-family:STSongti-SC-Black,'Songti SC',STSong,'Noto Serif CJK SC',serif; font-size:18px; font-weight:900; letter-spacing:2px; line-height:1.5; padding:12px 22px; margin:36px 0 16px; transform:rotate(-1deg);",
+    "h3": "display:inline-block; background-image:url({{asset:bar-navy}}); background-size:100% 100%; color:#F0EADB; font-family:STSongti-SC-Black,'Songti SC',STSong,'Noto Serif CJK SC',serif; font-size:16px; font-weight:700; line-height:1.5; padding:10px 18px; margin:28px 0 14px; transform:rotate(0.5deg);",
+    "h4": "font-size:15px; font-weight:700; color:#B7AE9C; letter-spacing:1px; margin:22px 0 10px;",
+    "p": "font-size:15px; line-height:1.95; color:#D8D2C2; margin:16px 0; letter-spacing:0.3px; text-align:justify; word-break:break-word;",
+    "blockquote": "background-image:url({{asset:panel-cream}}); background-size:100% 100%; border:none; padding:26px 26px; margin:26px 6px; color:#5C5344; font-size:15px; line-height:1.85; transform:rotate(-0.5deg);",
+    "strong": "background:linear-gradient(to top,rgba(193,145,63,0.4) 38%,rgba(0,0,0,0) 38%); color:#F0EADB; font-weight:700; padding:0 2px;",
+    "em": "color:#C1913F; font-style:normal; font-weight:600;",
+    "ul": "margin:16px 0; padding-left:24px;",
+    "ol": "margin:16px 0; padding-left:24px;",
+    "li": "font-size:15px; line-height:1.95; color:#D8D2C2; margin:6px 0;",
+    "a": "color:#C1913F; text-decoration:none; border-bottom:1px dashed #C1913F;",
+    "code": "background:#3A3835; color:#E8D9A8; padding:2px 6px; border-radius:3px; font-size:13px; font-family:Menlo,Consolas,monospace;",
+    "pre": "background:#1E1D1B; color:#D8D2C2; padding:16px; overflow-x:auto; font-size:13px; line-height:1.7; border:1px solid #3A3835;",
+    "hr": "border:0; border-top:2px dashed #5A554C; margin:36px 12px;"
+  }
+}
