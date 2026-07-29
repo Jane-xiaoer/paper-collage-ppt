@@ -1,0 +1,642 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>[必填] 替换为 PPT 标题 · Paper Collage Deck</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@400;500;700;900&family=Noto+Serif+SC:wght@600;900&family=Ma+Shan+Zheng&display=swap" rel="stylesheet">
+<style>
+/* ============================================================
+   PAPER COLLAGE DECK · 剪纸拼贴 PPT 模板
+   工艺:手剪轮廓纸片 / 撕边色块 / 撕纸山景 / 剪贴字 / 胶带订书钉 / 定格入场
+   配色:8 套内置在 body.t1..t8,改 <body class="tN"> 定初始主题(见 themes.md);面板带强调色滑杆
+   深色 field 主题(t4/t5/t8)由换肤脚本自动加 dark-field
+   ============================================================ */
+:root{
+  /* —— 主题色(默认:马蒂斯剪纸)—— */
+  --field:#F2ECDF;          /* 主题色:底纸 field */
+  --field-deep:#E6DCC8;     /* 主题色:深一档底纸 */
+  --paper:#FFFDF6;          /* 主题色:白纸片 */
+  --ink:#22283A;            /* 主题色:主墨色 */
+  --ink-soft:#6B7080;       /* 主题色:次级文字 */
+  --accent:#2E5FB7;         /* 主题色:强调色(马蒂斯蓝) */
+  --accent-rgb:46,95,183;   /* 主题色:强调色 RGB */
+  --accent-paper:#F0C9A8;   /* 主题色:强调纸片淡色(蜜桃) */
+  --kraft:#6FA07C;          /* 主题色:第二强调纸色(叶绿) */
+  --shadow-rgb:40,44,58;    /* 主题色:阴影基色 RGB */
+
+  /* —— 工艺常量(一般不动)—— */
+  --keyline:6px;
+  /* 剪裁纸片用 filter 阴影(box-shadow 会被 clip-path 剪掉) */
+  --lift-f:drop-shadow(1px 2px 2px rgba(var(--shadow-rgb),.20)) drop-shadow(7px 11px 15px rgba(var(--shadow-rgb),.14));
+  --lift-f-high:drop-shadow(2px 3px 3px rgba(var(--shadow-rgb),.22)) drop-shadow(12px 20px 28px rgba(var(--shadow-rgb),.18));
+  --lift:0 2px 3px rgba(var(--shadow-rgb),.18),0 8px 18px rgba(var(--shadow-rgb),.13);
+  --sans:'Noto Sans SC',-apple-system,'PingFang SC',sans-serif;
+  --serif:'Noto Serif SC','Songti SC',serif;
+  --hand:'Ma Shan Zheng','Kaiti SC',cursive;
+
+  /* —— 手剪轮廓(微抖多边形,三档) —— */
+  --cut:polygon(0.6% 1.8%,33% 0.4%,68% 1.5%,99.5% 0.7%,98.9% 34%,99.6% 67%,99.1% 98.6%,66% 99.5%,32% 98.4%,0.8% 99.2%,1.5% 65%,0.3% 33%);
+}
+.cut2{--cut:polygon(1.2% 0.5%,36% 1.6%,70% 0.3%,99.2% 1.4%,99.7% 36%,98.8% 70%,99.6% 99.3%,64% 98.5%,29% 99.6%,0.4% 98.7%,0.9% 63%,1.7% 30%)}
+.cut3{--cut:polygon(0.4% 2.6%,30% 0.8%,63% 2.2%,99.6% 0.4%,98.5% 30%,99.8% 62%,98.7% 97.8%,70% 99.7%,35% 98.1%,0.6% 99.5%,2% 68%,0.2% 36%)}
+
+/* ============================================================
+   8 套经典配色(艺术史提炼)· 换肤=换 body 的 tN class
+   深色 field 主题(t4/t5/t8)由换肤脚本自动追加 dark-field
+   ============================================================ */
+body.t1{--field:#F2ECDF;--field-deep:#E6DCC8;--paper:#FFFDF6;--ink:#22283A;--ink-soft:#6B7080;
+  --accent:#2E5FB7;--accent-rgb:46,95,183;--accent-paper:#F0C9A8;--kraft:#6FA07C;--shadow-rgb:40,44,58}
+body.t2{--field:#F5F5F1;--field-deep:#E8E8E1;--paper:#FFFFFF;--ink:#121212;--ink-soft:#63635E;
+  --accent:#D62F2A;--accent-rgb:214,47,42;--accent-paper:#F6D93F;--kraft:#2A4DB4;--shadow-rgb:20,20,20}
+body.t3{--field:#EAE2D5;--field-deep:#DCD2C0;--paper:#FBF6EC;--ink:#201C18;--ink-soft:#6A6157;
+  --accent:#D94F2B;--accent-rgb:217,79,43;--accent-paper:#E9C93F;--kraft:#33608D;--shadow-rgb:32,27,20}
+body.t4{--field:#B3271D;--field-deep:#8F1D15;--paper:#F7F0DF;--ink:#2B1512;--ink-soft:#75604F;
+  --accent:#E7B34B;--accent-rgb:231,179,75;--accent-paper:#F0D9A8;--kraft:#D46A55;--shadow-rgb:56,10,6;
+  --field-text:#F7F0DF;--field-text-soft:rgba(247,240,223,.75)}
+body.t5{--field:#2B49C3;--field-deep:#20389B;--paper:#F6F5EF;--ink:#141B33;--ink-soft:#565D75;
+  --accent:#FFD02F;--accent-rgb:255,208,47;--accent-paper:#F8E7A0;--kraft:#7D8FD9;--shadow-rgb:8,14,48;
+  --field-text:#F6F5EF;--field-text-soft:rgba(246,245,239,.72)}
+body.t6{--field:#F3F2EE;--field-deep:#E6E5E0;--paper:#FFFFFF;--ink:#191919;--ink-soft:#66665F;
+  --accent:#E43225;--accent-rgb:228,50,37;--accent-paper:#F6CCC5;--kraft:#C9C7BE;--shadow-rgb:25,25,25}
+body.t7{--field:#E7EBE1;--field-deep:#D7DECF;--paper:#FBFCF8;--ink:#2C332B;--ink-soft:#6F7A6C;
+  --accent:#3F6D4E;--accent-rgb:63,109,78;--accent-paper:#CDDCC9;--kraft:#A8B49A;--shadow-rgb:44,51,43}
+body.t8{--field:#23252E;--field-deep:#1A1C24;--paper:#F1EEE4;--ink:#26282F;--ink-soft:#6A6E7A;
+  --accent:#63C7AE;--accent-rgb:99,199,174;--accent-paper:#BFE7DC;--kraft:#4A4E5C;--shadow-rgb:0,0,0;
+  --field-text:#EDEBE2;--field-text-soft:rgba(237,235,226,.68)}
+
+*{margin:0;padding:0;box-sizing:border-box}
+html,body{height:100%;overflow:hidden;background:var(--field)}
+body{font-family:var(--sans);color:var(--ink)}
+
+/* ---------- 全场纸质感:细纤维颗粒 + 粗斑驳色调 + 轻晕影 ---------- */
+body::after{
+  content:'';position:fixed;inset:0;pointer-events:none;z-index:90;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='240' height='240'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 0.2 0 0 0 0 0.2 0 0 0 0 0.2 0 0 0 0.07 0'/%3E%3C/filter%3E%3Crect width='240' height='240' filter='url(%23n)'/%3E%3C/svg%3E");
+}
+body::before{ /* 大尺度纸浆斑驳(纸的色调本来就不均匀)+ 四角轻晕影 */
+  content:'';position:fixed;inset:0;pointer-events:none;z-index:89;
+  background-image:
+    radial-gradient(ellipse 120% 120% at 50% 45%,transparent 55%,rgba(0,0,0,.06) 100%),
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='900' height='900'%3E%3Cfilter id='m'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.012' numOctaves='3' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 0.3 0 0 0 0 0.27 0 0 0 0 0.22 0 0 0 0.05 0'/%3E%3C/filter%3E%3Crect width='900' height='900' filter='url(%23m)'/%3E%3C/svg%3E");
+}
+
+/* ---------- deck 横向翻页骨架 ---------- */
+#deck{display:flex;height:100vh;transition:transform .62s cubic-bezier(.77,0,.18,1)}
+.slide{
+  flex:0 0 100vw;height:100vh;position:relative;overflow:hidden;
+  padding:7vh 6vw;display:flex;flex-direction:column;justify-content:center;
+  background:var(--field);
+}
+.slide.deep{background:var(--field-deep)}
+.slide.ink{background:var(--ink);color:var(--paper)}
+
+/* ---------- 深色 field 主题(body.dark-field):裸文字翻亮,纸片文字翻回深 ---------- */
+body.dark-field .slide{color:var(--field-text,#F4F2EA)}
+body.dark-field .slide :is(.kicker,.lead,.body-s){color:var(--field-text-soft,rgba(244,242,234,.72))}
+body.dark-field .piece{color:var(--ink)}
+body.dark-field .piece :is(.lead,.body-s,.step-desc,.stat-note){color:var(--ink-soft)}
+body.dark-field .slide .uline{background-image:linear-gradient(to top,rgba(var(--accent-rgb),.45) 34%,transparent 34%)}
+
+/* ============================================================
+   纸片工艺系统 v2
+   ============================================================ */
+
+/* —— 基础纸片:手剪轮廓 + 白 keyline + filter 阴影 —— */
+.piece{
+  background:var(--paper);
+  border:var(--keyline) solid var(--paper);
+  clip-path:var(--cut);
+  filter:var(--lift-f-cur,var(--lift-f));
+  position:relative;
+}
+.piece.tinted{background:var(--accent-paper)}
+.piece.kraft{background:var(--kraft)}
+.piece.inked{background:var(--ink);color:var(--paper)}
+.piece.accent{background:var(--accent);color:var(--paper)}
+.piece.straight{clip-path:none;box-shadow:var(--lift);filter:none}
+.high{--lift-f-cur:var(--lift-f-high)}
+
+/* 纸片自带纤维 + 受光面 + 边缘吃光(纸不是完全平的) */
+.piece::before{
+  content:'';position:absolute;inset:calc(var(--keyline)*-1);pointer-events:none;
+  background:linear-gradient(115deg,rgba(255,255,255,.35),transparent 42%,rgba(var(--shadow-rgb),.07) 88%);
+  box-shadow:inset 0 0 16px rgba(var(--shadow-rgb),.07);
+}
+.piece::after{
+  content:'';position:absolute;inset:calc(var(--keyline)*-1);pointer-events:none;opacity:.8;
+  background-image:
+    repeating-linear-gradient(93deg,rgba(var(--shadow-rgb),.02) 0 1px,transparent 1px 7px),
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='p'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 0.25 0 0 0 0 0.22 0 0 0 0 0.18 0 0 0 0.05 0'/%3E%3C/filter%3E%3Crect width='160' height='160' filter='url(%23p)'/%3E%3C/svg%3E");
+}
+
+/* —— pin 包裹层:胶带/订书钉必须贴在 .pin 里、.piece 外(贴进 piece 会被剪掉) —— */
+.pin{position:relative}
+
+/* —— 手工微旋转:纸片永远不许摆得笔直 —— */
+.r0{transform:rotate(-.4deg)}
+.r1{transform:rotate(1deg)}
+.r2{transform:rotate(1.8deg)}
+.r-1{transform:rotate(-1deg)}
+.r-2{transform:rotate(-1.7deg)}
+
+/* —— 撕边:大幅锯齿,用于色块/纸带/山景 —— */
+.torn-strip{
+  clip-path:polygon(0 12%,3% 4%,7% 10%,11% 2%,16% 9%,21% 3%,26% 11%,32% 5%,38% 12%,44% 4%,50% 10%,56% 3%,62% 11%,68% 5%,74% 12%,80% 4%,85% 10%,90% 3%,95% 9%,100% 5%,100% 88%,97% 95%,93% 89%,88% 97%,83% 90%,77% 96%,71% 89%,65% 97%,59% 91%,53% 96%,47% 89%,41% 96%,35% 90%,29% 97%,23% 90%,17% 96%,12% 89%,7% 95%,3% 90%,0 96%);
+  filter:var(--lift-f-cur,var(--lift-f));
+}
+.torn-b{ /* 只撕下边:大色块/章节块用 */
+  clip-path:polygon(0 0,100% 0,100% 90%,96% 95%,91% 89%,86% 96%,81% 90%,76% 97%,70% 91%,64% 98%,58% 92%,52% 97%,46% 90%,40% 96%,34% 91%,28% 98%,22% 92%,16% 96%,10% 90%,5% 97%,0 92%);
+  filter:var(--lift-f-cur,var(--lift-f));
+}
+.torn-strip,.torn-b{position:relative}
+/* 撕纸块/山景条同样有纸浆纹理 */
+.torn-strip::after,.torn-b::after,.hills .hill::after{
+  content:'';position:absolute;inset:0;pointer-events:none;opacity:.55;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200'%3E%3Cfilter id='t'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.7' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 0.25 0 0 0 0 0.22 0 0 0 0 0.18 0 0 0 0.06 0'/%3E%3C/filter%3E%3Crect width='200' height='200' filter='url(%23t)'/%3E%3C/svg%3E");
+}
+.torn-t{ /* 只撕上边:山景条用 */
+  clip-path:polygon(0 10%,4% 3%,9% 11%,14% 4%,19% 10%,25% 3%,31% 9%,37% 2%,43% 10%,49% 4%,55% 11%,61% 3%,67% 9%,73% 2%,79% 10%,85% 4%,90% 11%,95% 3%,100% 9%,100% 100%,0 100%);
+}
+
+/* —— 层叠撕纸山景:封面/收尾页底部的三层撕纸地平线 —— */
+.hills{position:absolute;left:0;right:0;bottom:0;height:26vh;pointer-events:none;z-index:1}
+.hills .hill{position:absolute;left:-2vw;right:-2vw;bottom:0}
+.hills .hill:nth-child(1){height:22vh;background:var(--accent-paper);filter:drop-shadow(0 -4px 9px rgba(var(--shadow-rgb),.22))}
+.hills .hill:nth-child(2){height:14vh;background:var(--kraft);filter:drop-shadow(0 -4px 9px rgba(var(--shadow-rgb),.26))}
+.hills .hill:nth-child(3){height:7vh;background:var(--field-deep);filter:drop-shadow(0 -4px 9px rgba(var(--shadow-rgb),.3))}
+.slide.ink .hills .hill:nth-child(3){background:var(--accent)}
+.slide>*:not(.hills):not(.scrap):not(.dotfield){z-index:2}
+
+/* —— 剪贴字:标题每个字剪成一张小纸片(报纸拼贴字) —— */
+.chips span{
+  display:inline-block;background:var(--paper);color:var(--ink);
+  padding:.02em .14em;margin:.05em .05em;
+  box-shadow:2px 3px 7px rgba(var(--shadow-rgb),.24);
+  transform:rotate(-1.3deg);
+}
+.chips span:nth-child(2n){transform:rotate(1.5deg)}
+.chips span:nth-child(3n){transform:rotate(-.5deg);padding-top:.05em}
+.chips span:nth-child(5n){transform:rotate(2deg)}
+.chips .acc{background:var(--accent);color:var(--paper)}
+.chips .inkc{background:var(--ink);color:var(--paper)}
+.chips .tint{background:var(--accent-paper);color:var(--ink)}
+.chips .kra{background:var(--kraft);color:var(--paper)}
+
+/* —— 半调网点 —— */
+.halftone::before{
+  content:'';position:absolute;inset:0;pointer-events:none;
+  background-image:radial-gradient(circle,rgba(var(--shadow-rgb),.13) 1px,transparent 1.4px);
+  background-size:7px 7px;
+}
+.slide.ink .halftone::before{
+  background-image:radial-gradient(circle,rgba(255,255,255,.13) 1px,transparent 1.4px);
+}
+/* 网点贴片:圆形网点渐隐装饰,editorial 拼贴常客 */
+.dotfield{
+  position:absolute;pointer-events:none;z-index:1;
+  background-image:radial-gradient(circle,rgba(var(--shadow-rgb),.3) 1.3px,transparent 1.7px);
+  background-size:9px 9px;
+  -webkit-mask-image:radial-gradient(closest-side,#000 55%,transparent);
+  mask-image:radial-gradient(closest-side,#000 55%,transparent);
+}
+
+/* —— 和纸胶带(贴在 .pin 里 .piece 外) —— */
+.tape{
+  position:absolute;width:9vw;height:3.4vh;min-height:24px;
+  background:rgba(var(--accent-rgb),.42);
+  clip-path:polygon(2% 0,98% 4%,100% 96%,0 100%,1% 55%,0 45%);
+  box-shadow:0 1px 3px rgba(var(--shadow-rgb),.18);
+  z-index:3;
+}
+.tape.neutral{background:rgba(var(--shadow-rgb),.26)}
+.tape.tl{top:-1.6vh;left:-2.2vw;transform:rotate(-42deg)}
+.tape.tr{top:-1.6vh;right:-2.2vw;transform:rotate(42deg)}
+.tape.tc{top:-1.8vh;left:50%;transform:translateX(-50%) rotate(-3deg)}
+
+/* —— 订书钉(贴在 .pin 里) —— */
+.staple{
+  position:absolute;width:1.7vw;height:1.1vh;min-width:20px;min-height:8px;
+  border:3px solid rgba(var(--shadow-rgb),.55);border-bottom:none;
+  border-radius:4px 4px 0 0;z-index:3;
+}
+.staple.sl{top:-.5vh;left:14%;transform:rotate(-7deg)}
+.staple.sr{top:-.5vh;right:14%;transform:rotate(6deg)}
+
+/* ============================================================
+   文字系统(全部真 HTML,永不乱码)
+   ============================================================ */
+.kicker{font-size:.85vw;font-weight:700;letter-spacing:.42em;text-transform:uppercase;color:var(--ink-soft)}
+.slide.ink .kicker{color:var(--accent-paper)}
+.h-hero{font-size:5.2vw;font-weight:900;line-height:1.18;letter-spacing:.02em}
+.h-xl{font-size:3.6vw;font-weight:900;line-height:1.22}
+.h-md{font-size:1.9vw;font-weight:900;line-height:1.3}
+.h-hand{font-family:var(--hand);font-weight:400;color:var(--accent)}
+.lead{font-size:1.25vw;line-height:1.9;color:var(--ink-soft);font-weight:500}
+.slide.ink .lead{color:rgba(255,255,255,.72)}
+.body-s{font-size:.95vw;line-height:1.85;color:var(--ink-soft)}
+
+.label{
+  display:inline-block;background:var(--ink);color:var(--paper);
+  font-size:.9vw;font-weight:900;letter-spacing:.3em;
+  padding:.75vh 1.3vw .75vh 1.6vw;box-shadow:var(--lift);
+}
+.label.paper{background:var(--paper);color:var(--ink);border:2px solid var(--ink)}
+.label.accent{background:var(--accent);color:var(--paper)}
+
+.uline{background-image:linear-gradient(to top,var(--accent-paper) 34%,transparent 34%)}
+.slide.ink .uline{background-image:linear-gradient(to top,rgba(var(--accent-rgb),.5) 34%,transparent 34%)}
+
+/* ============================================================
+   布局组件
+   ============================================================ */
+.grid-2{display:grid;grid-template-columns:1fr 1fr;gap:4vw;align-items:center;height:100%}
+/* 版式镜像:任何左右布局加 .flip 即整页左右互换(评审改稿时快速试另一版,不用重写) */
+.grid-2.flip,.grid-7-5.flip,.grid-5-7.flip{direction:rtl}
+.grid-2.flip>*,.grid-7-5.flip>*,.grid-5-7.flip>*{direction:ltr}
+.grid-3{display:grid;grid-template-columns:repeat(3,1fr);gap:2.6vw;align-items:stretch}
+.grid-7-5{display:grid;grid-template-columns:7fr 5fr;gap:4vw;align-items:center;height:100%}
+.grid-5-7{display:grid;grid-template-columns:5fr 7fr;gap:4vw;align-items:center;height:100%}
+.stack{display:flex;flex-direction:column;gap:2.4vh;align-items:flex-start}
+
+.card{padding:4.2vh 2vw;display:flex;flex-direction:column;gap:1.6vh}
+.card .card-nb{font-size:2.6vw;font-weight:900;color:var(--accent);font-family:var(--serif);line-height:1}
+
+.frame{padding:0;overflow:visible}
+.frame img{display:block;width:100%;height:auto;max-height:60vh;object-fit:cover}
+.frame .ph{
+  width:100%;aspect-ratio:4/3;background:var(--field-deep);
+  display:flex;align-items:center;justify-content:center;
+  color:var(--ink-soft);font-size:.9vw;letter-spacing:.2em;
+}
+.img-cap{font-size:.8vw;color:var(--ink-soft);letter-spacing:.12em;margin-top:1.4vh}
+
+.steps{display:flex;gap:2vw;align-items:stretch}
+.step{flex:1;padding:3.4vh 1.6vw;display:flex;flex-direction:column;gap:1.2vh}
+.step-nb{font-family:var(--serif);font-size:1.7vw;font-weight:900;color:var(--accent)}
+.step-title{font-size:1.15vw;font-weight:900}
+.step-desc{font-size:.88vw;line-height:1.75;color:var(--ink-soft)}
+.arrow-hand{align-self:center;flex:0 0 auto;width:3.2vw;color:var(--ink-soft)}
+
+.stat{display:flex;flex-direction:column;gap:1vh;padding:4vh 2.4vw}
+.stat-nb{font-family:var(--serif);font-size:5.4vw;font-weight:900;line-height:1;color:var(--accent)}
+.stat-unit{font-size:1.6vw;font-weight:700}
+.stat-note{font-size:.9vw;color:var(--ink-soft);line-height:1.7}
+
+.scrap{position:absolute;box-shadow:0 1px 3px rgba(var(--shadow-rgb),.2);z-index:1}
+.scrap.dot{border-radius:50%}
+.scrap.c-accent{background:var(--accent)}
+.scrap.c-kraft{background:var(--kraft)}
+.scrap.c-ink{background:var(--ink)}
+.scrap.c-tint{background:var(--accent-paper)}
+/* 纸星星:五角星剪纸屑 */
+.scrap.star{
+  clip-path:polygon(50% 0,61% 35%,98% 35%,68% 57%,79% 91%,50% 70%,21% 91%,32% 57%,2% 35%,39% 35%);
+  box-shadow:none;filter:drop-shadow(1px 2px 2px rgba(var(--shadow-rgb),.3));
+}
+
+/* ============================================================
+   入场动效:纸片逐张「贴」上来(steps 定格手感)
+   ============================================================ */
+[data-drop]{opacity:0;transform:translateY(-4.5vh) rotate(var(--rot,0deg)) scale(1.04)}
+.slide.active [data-drop]{
+  opacity:1;transform:translateY(0) rotate(var(--rot,0deg)) scale(1);
+  transition:opacity .45s steps(4),transform .5s steps(5);
+}
+.slide.active [data-drop="1"]{transition-delay:.05s}
+.slide.active [data-drop="2"]{transition-delay:.22s}
+.slide.active [data-drop="3"]{transition-delay:.39s}
+.slide.active [data-drop="4"]{transition-delay:.56s}
+.slide.active [data-drop="5"]{transition-delay:.73s}
+.slide.active [data-drop="6"]{transition-delay:.9s}
+
+/* ---------- 内置换肤面板(每份 deck 自带,观众也能一键换风格) ---------- */
+#skinbar{
+  position:fixed;bottom:2.6vh;left:1.4vw;z-index:96;
+  background:var(--paper);color:var(--ink);box-shadow:var(--lift);
+  transform:rotate(-.6deg);font-family:var(--sans);
+  padding:1vh .9vw;display:flex;flex-direction:column;gap:.5vh;
+}
+#skinbar .sb-title{
+  font-size:.72vw;font-weight:900;letter-spacing:.24em;color:var(--ink-soft);
+  cursor:pointer;user-select:none;white-space:nowrap;
+}
+#skinbar .sb-grid{display:grid;grid-template-columns:1fr 1fr;gap:.1vh .8vw;margin-top:.4vh}
+#skinbar.folded .sb-grid{display:none}
+#skinbar button{
+  display:flex;align-items:center;gap:.45vw;border:none;background:transparent;
+  cursor:pointer;padding:.4vh .2vw;font-family:var(--sans);font-size:.78vw;font-weight:700;
+  color:var(--ink);text-align:left;border-left:3px solid transparent;white-space:nowrap;
+}
+#skinbar button.on{border-left-color:var(--accent);background:rgba(var(--shadow-rgb),.07)}
+#skinbar .sw{display:inline-flex;gap:2px;flex:0 0 auto}
+#skinbar .sw i{width:.7vw;height:.7vw;min-width:7px;min-height:7px;border-radius:50%;display:inline-block;box-shadow:0 1px 2px rgba(0,0,0,.3)}
+#skinbar .sb-hue{display:flex;align-items:center;gap:.5vw;font-size:.66vw;font-weight:700;letter-spacing:.1em;color:var(--ink-soft);margin-top:.5vh;white-space:nowrap}
+#skinbar .sb-hue input{width:9vw;accent-color:var(--accent)}
+#skinbar.folded .sb-hue{display:none}
+
+/* ---------- 页码 / 圆点导航 ---------- */
+#dots{position:fixed;bottom:3vh;left:50%;transform:translateX(-50%);display:flex;gap:.7vw;z-index:95}
+#dots button{
+  width:.65vw;height:.65vw;min-width:8px;min-height:8px;border-radius:50%;
+  border:none;background:rgba(var(--shadow-rgb),.25);cursor:pointer;padding:0;
+  transition:background .3s,transform .3s;
+}
+#dots button.on{background:var(--accent);transform:scale(1.35)}
+#pageno{
+  position:fixed;bottom:2.6vh;right:2.4vw;z-index:95;
+  font-size:.8vw;letter-spacing:.22em;color:var(--ink-soft);font-weight:700;
+}
+body.dark-field #pageno{color:var(--field-text-soft,rgba(244,242,234,.6))}
+</style>
+</head>
+<body class="t1"><!-- 初始风格:改这里的 tN(见 references/themes.md);观众仍可用左下面板切换 -->
+
+<main id="deck">
+<!-- 以下 10 页 = 10 种布局各一页,既是示例也是菜单;做真 deck 时按需增删改文案 -->
+<section class="slide">
+  <div class="hills"><div class="hill torn-t"></div><div class="hill torn-t"></div><div class="hill torn-t"></div></div>
+  <div class="dotfield" style="width:10vw;height:10vw;top:12vh;left:7vw"></div>
+  <div class="scrap star c-accent" style="width:1.7vw;height:1.7vw;top:15vh;right:20vw;transform:rotate(12deg)"></div>
+  <div class="scrap dot c-kraft" style="width:1vw;height:1vw;top:22vh;left:16vw"></div>
+  <div class="stack" style="align-items:center;text-align:center;gap:3.2vh;position:relative;z-index:2">
+    <span class="label accent r-1" data-drop="1" style="--rot:-1deg">PAPER COLLAGE DECK</span>
+    <h1 class="h-hero chips" data-drop="2" style="font-size:6.2vw"><span>把</span><span>想</span><span>法</span><span class="acc">剪</span><span>下</span><span>来</span><br><span class="tint">贴</span><span>成</span><span>一</span><span>场</span><span class="inkc">分</span><span>享</span></h1>
+    <p class="lead" data-drop="3">[必填] 一句话副标题,说清这场分享是讲给谁听的。</p>
+    <p class="body-s" data-drop="4" style="letter-spacing:.22em">[讲者名] · [日期] · [场合]</p>
+  </div>
+</section>
+<section class="slide ink halftone">
+  <div class="grid-5-7">
+    <div class="pin r-2 high" data-drop="1" style="--rot:-2deg">
+      <div class="torn-b" style="background:var(--accent);padding:12vh 2vw 14vh;text-align:center">
+        <span style="font-family:var(--serif);font-size:9vw;font-weight:900;color:var(--paper);line-height:1">壹</span>
+      </div>
+      <span class="tape tc neutral"></span>
+    </div>
+    <div class="stack">
+      <span class="kicker" data-drop="2">CHAPTER ONE</span>
+      <h2 class="h-xl chips" data-drop="3"><span>章</span><span class="acc">节</span><span>标</span><span>题</span></h2>
+      <p class="lead" data-drop="4">一句话预告这一幕。</p>
+    </div>
+  </div>
+</section>
+<section class="slide deep">
+  <div class="torn-strip" data-drop="1" style="position:absolute;left:-3vw;right:-3vw;top:56vh;height:9vh;background:var(--accent-paper);transform:rotate(-1.2deg);z-index:1"></div>
+  <div class="stack" style="align-items:center;text-align:center;gap:3.6vh;position:relative;z-index:2">
+    <span class="kicker" data-drop="1">ONE BIG IDEA</span>
+    <div class="pin r-1 high" data-drop="2" style="--rot:-1deg;max-width:64vw">
+      <div class="piece cut3" style="padding:5.5vh 4.5vw">
+        <h2 class="h-xl" style="line-height:1.55">金句正文<span class="h-hand">,</span><br>核心词<span class="uline">垫纸条</span></h2>
+      </div>
+      <span class="staple sl"></span><span class="staple sr"></span>
+    </div>
+    <p class="body-s" data-drop="3" style="letter-spacing:.2em">—— 出处或注脚</p>
+  </div>
+</section>
+<section class="slide">
+  <div class="dotfield" style="width:10vw;height:10vw;bottom:8vh;right:6vw"></div>
+  <div class="stack" style="gap:4.5vh">
+    <div class="stack" style="gap:1.2vh">
+      <span class="kicker" data-drop="1">THREE THINGS</span>
+      <h2 class="h-md" data-drop="1" style="font-size:2.4vw">本页论点</h2>
+    </div>
+    <div class="grid-3" style="width:100%">
+      <div class="pin r-1" data-drop="2" style="--rot:-1deg">
+        <div class="piece card"><span class="card-nb">一</span><h3 class="h-md">要点</h3><p class="body-s">两三行短句。</p></div>
+        <span class="staple sl"></span>
+      </div>
+      <div class="pin r1" data-drop="3" style="--rot:1deg">
+        <div class="piece card tinted cut2"><span class="card-nb">二</span><h3 class="h-md">要点</h3><p class="body-s">中间换纸色。</p></div>
+        <span class="tape tc"></span>
+      </div>
+      <div class="pin r-2" data-drop="4" style="--rot:-1.7deg">
+        <div class="piece card cut3"><span class="card-nb">三</span><h3 class="h-md">要点</h3><p class="body-s">轮廓各不相同。</p></div>
+      </div>
+    </div>
+  </div>
+</section>
+<section class="slide">
+  <div class="grid-2">
+    <div class="stack">
+      <span class="label r-1" data-drop="1" style="--rot:-1deg">CASE</span>
+      <h2 class="h-xl" data-drop="2">故事标题</h2>
+      <p class="lead" data-drop="3">两三行叙述,关键词<span class="uline">垫纸条</span>。</p>
+    </div>
+    <div class="pin r1 high" data-drop="3" style="--rot:1deg">
+      <div class="piece frame cut2">
+        <div class="ph">05-case.png · 场景剪纸插画 4:3</div>
+        <p class="img-cap" style="padding:0 1vw 1vh">图注一句话</p>
+      </div>
+      <span class="tape tr"></span>
+    </div>
+  </div>
+</section>
+<section class="slide deep">
+  <div class="stack" style="gap:5vh">
+    <div class="stack" style="gap:1.2vh">
+      <span class="kicker" data-drop="1">WORKFLOW</span>
+      <h2 class="h-md" data-drop="1" style="font-size:2.4vw">流程标题</h2>
+    </div>
+    <div class="steps" style="width:100%">
+      <div class="piece step r-1" data-drop="2" style="--rot:-1deg">
+        <span class="step-nb">01</span><span class="step-title">步骤名</span><span class="step-desc">一句话。</span>
+      </div>
+      <svg class="arrow-hand" data-drop="3" viewBox="0 0 60 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M4 14 C 20 6, 38 6, 52 12"/><path d="M45 5 L 53 12 L 43 16"/></svg>
+      <div class="piece step cut2 r1" data-drop="3" style="--rot:1deg">
+        <span class="step-nb">02</span><span class="step-title">步骤名</span><span class="step-desc">一句话。</span>
+      </div>
+      <svg class="arrow-hand" data-drop="4" viewBox="0 0 60 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M4 10 C 20 18, 38 18, 52 12"/><path d="M45 6 L 53 12 L 44 19"/></svg>
+      <div class="piece step tinted cut3 r-2" data-drop="4" style="--rot:-1.5deg">
+        <span class="step-nb">03</span><span class="step-title">步骤名</span><span class="step-desc">一句话。</span>
+      </div>
+    </div>
+  </div>
+</section>
+<section class="slide" style="padding:0">
+  <div style="display:grid;grid-template-columns:1fr 1fr;height:100%;position:relative">
+    <div style="background:var(--field-deep);padding:10vh 4vw;display:flex;flex-direction:column;gap:2.6vh;justify-content:center">
+      <span class="label r-1" data-drop="1" style="--rot:-1deg;align-self:flex-start">BEFORE</span>
+      <h3 class="h-md" data-drop="2" style="font-size:1.9vw">旧的做法</h3>
+      <div class="piece card r-1 cut2" data-drop="3" style="--rot:-1deg"><p class="body-s">痛点短句列出。</p></div>
+    </div>
+    <div style="padding:10vh 4vw;display:flex;flex-direction:column;gap:2.6vh;justify-content:center">
+      <span class="label accent r1" data-drop="1" style="--rot:1deg;align-self:flex-start">AFTER</span>
+      <h3 class="h-md" data-drop="2" style="font-size:1.9vw">新的做法</h3>
+      <div class="piece card tinted r1 cut3" data-drop="4" style="--rot:1deg"><p class="body-s">对应改善,逐条呼应。</p></div>
+    </div>
+    <div class="piece accent r-2 high" data-drop="5" style="--rot:-1.7deg;position:absolute;left:50%;top:50%;transform:translate(-50%,-50%) rotate(-1.7deg);padding:1.6vh 1.4vw;z-index:5">
+      <span style="font-weight:900;font-size:1.3vw;letter-spacing:.1em">VS</span>
+    </div>
+  </div>
+</section>
+<section class="slide">
+  <div class="stack" style="gap:4.5vh">
+    <div class="stack" style="gap:1.2vh">
+      <span class="kicker" data-drop="1">NUMBERS</span>
+      <h2 class="h-md" data-drop="1" style="font-size:2.4vw">数据说明了什么</h2>
+    </div>
+    <div class="grid-3" style="width:100%">
+      <div class="piece stat r-1" data-drop="2" style="--rot:-1deg">
+        <span class="stat-nb">87<span class="stat-unit">%</span></span>
+        <span class="stat-note">一句话解释</span>
+      </div>
+      <div class="piece stat inked cut2 r1" data-drop="3" style="--rot:1deg">
+        <span class="stat-nb" style="color:var(--accent-paper)">3<span class="stat-unit">倍</span></span>
+        <span class="stat-note" style="color:rgba(255,255,255,.7)">中间换墨底纸片</span>
+      </div>
+      <div class="piece stat cut3 r-2" data-drop="4" style="--rot:-1.7deg">
+        <span class="stat-nb">10<span class="stat-unit">min</span></span>
+        <span class="stat-note">一句话解释</span>
+      </div>
+    </div>
+  </div>
+</section>
+<section class="slide deep">
+  <div class="grid-5-7">
+    <div class="stack">
+      <span class="label r-1" data-drop="1" style="--rot:-1deg">CHECKLIST</span>
+      <h2 class="h-xl" data-drop="2">交付前<br>过一遍</h2>
+    </div>
+    <div class="stack" style="gap:2vh;width:100%">
+      <div class="piece r1" data-drop="3" style="--rot:1deg;padding:2.2vh 2vw;width:100%;display:flex;gap:1.2vw;align-items:center">
+        <span class="h-hand" style="font-size:1.6vw">✓</span><p class="body-s" style="font-size:1.05vw">清单项一。</p>
+      </div>
+      <div class="piece tinted cut2 r-1" data-drop="4" style="--rot:-1deg;padding:2.2vh 2vw;width:100%;display:flex;gap:1.2vw;align-items:center">
+        <span class="h-hand" style="font-size:1.6vw">✓</span><p class="body-s" style="font-size:1.05vw">清单项二。</p>
+      </div>
+      <div class="piece cut3 r2" data-drop="5" style="--rot:1.8deg;padding:2.2vh 2vw;width:100%;display:flex;gap:1.2vw;align-items:center">
+        <span class="h-hand" style="font-size:1.6vw">✓</span><p class="body-s" style="font-size:1.05vw">清单项三。</p>
+      </div>
+    </div>
+  </div>
+</section>
+<section class="slide ink halftone">
+  <div class="hills"><div class="hill torn-t"></div><div class="hill torn-t"></div><div class="hill torn-t"></div></div>
+  <div class="scrap star c-tint" style="width:1.6vw;height:1.6vw;top:16vh;left:16vw;transform:rotate(-10deg)"></div>
+  <div class="stack" style="align-items:center;text-align:center;gap:3.4vh;position:relative;z-index:2">
+    <span class="kicker" data-drop="1">TAKEAWAY</span>
+    <h2 class="h-hero chips" data-drop="2" style="font-size:4.4vw"><span>收</span><span>尾</span><span class="acc">金</span><span>句</span></h2>
+    <div class="pin r1" data-drop="3" style="--rot:1deg">
+      <div class="piece" style="padding:2.2vh 3vw"><p class="h-md" style="color:var(--ink)">CTA / 联系方式</p></div>
+      <span class="tape tl"></span>
+    </div>
+    <p class="body-s" data-drop="4" style="letter-spacing:.24em">THANK YOU · 讲者名</p>
+  </div>
+</section>
+</main>
+
+<nav id="dots" aria-label="页面导航"></nav>
+<div id="pageno">1 / 1</div>
+
+<div id="skinbar" class="folded">
+  <span class="sb-title" id="sbfold">✂ 风格 · STYLE</span>
+  <div class="sb-grid">
+    <button data-t="t1"><span class="sw"><i style="background:#F2ECDF"></i><i style="background:#2E5FB7"></i><i style="background:#F0C9A8"></i></span>马蒂斯剪纸</button>
+    <button data-t="t2"><span class="sw"><i style="background:#F5F5F1"></i><i style="background:#D62F2A"></i><i style="background:#F6D93F"></i></span>蒙德里安</button>
+    <button data-t="t3"><span class="sw"><i style="background:#EAE2D5"></i><i style="background:#D94F2B"></i><i style="background:#33608D"></i></span>包豪斯</button>
+    <button data-t="t4"><span class="sw"><i style="background:#B3271D"></i><i style="background:#F7F0DF"></i><i style="background:#E7B34B"></i></span>中国大红剪纸</button>
+    <button data-t="t5"><span class="sw"><i style="background:#2B49C3"></i><i style="background:#F6F5EF"></i><i style="background:#FFD02F"></i></span>克莱因蓝色纸</button>
+    <button data-t="t6"><span class="sw"><i style="background:#F3F2EE"></i><i style="background:#191919"></i><i style="background:#E43225"></i></span>报纸×印刷红</button>
+    <button data-t="t7"><span class="sw"><i style="background:#E7EBE1"></i><i style="background:#3F6D4E"></i><i style="background:#A8B49A"></i></span>苔绿清晨</button>
+    <button data-t="t8"><span class="sw"><i style="background:#23252E"></i><i style="background:#F1EEE4"></i><i style="background:#63C7AE"></i></span>午夜墨×薄荷</button>
+  </div>
+  <label class="sb-hue">强调色微调<input id="sbhue" type="range" min="0" max="360" step="1"></label>
+</div>
+
+<script>
+/* ============ 轻量横向翻页引擎(无依赖) ============ */
+(function(){
+  const deck=document.getElementById('deck');
+  const slides=[...deck.querySelectorAll('.slide')];
+  const dots=document.getElementById('dots');
+  const pageno=document.getElementById('pageno');
+  let cur=0,lock=false;
+
+  slides.forEach((_,i)=>{
+    const b=document.createElement('button');
+    b.setAttribute('aria-label','第'+(i+1)+'页');
+    b.addEventListener('click',()=>go(i));
+    dots.appendChild(b);
+  });
+
+  function go(i){
+    cur=Math.max(0,Math.min(slides.length-1,i));
+    deck.style.transform='translateX(-'+cur*100+'vw)';
+    slides.forEach((s,k)=>s.classList.toggle('active',k===cur));
+    [...dots.children].forEach((d,k)=>d.classList.toggle('on',k===cur));
+    pageno.textContent=(cur+1)+' / '+slides.length;
+    history.replaceState(null,'','#'+(cur+1));
+  }
+
+  addEventListener('keydown',e=>{
+    if(e.key==='ArrowRight'||e.key==='PageDown'||e.key===' ')go(cur+1);
+    if(e.key==='ArrowLeft'||e.key==='PageUp')go(cur-1);
+    if(e.key==='Home')go(0);
+    if(e.key==='End')go(slides.length-1);
+  });
+
+  addEventListener('wheel',e=>{
+    if(lock)return;
+    const d=Math.abs(e.deltaX)>Math.abs(e.deltaY)?e.deltaX:e.deltaY;
+    if(Math.abs(d)<18)return;
+    lock=true;setTimeout(()=>lock=false,650);
+    go(cur+(d>0?1:-1));
+  },{passive:true});
+
+  let tx=0;
+  addEventListener('touchstart',e=>tx=e.touches[0].clientX,{passive:true});
+  addEventListener('touchend',e=>{
+    const dx=e.changedTouches[0].clientX-tx;
+    if(Math.abs(dx)>48)go(cur+(dx<0?1:-1));
+  },{passive:true});
+
+  const h=parseInt(location.hash.slice(1));
+  go(isNaN(h)?0:h-1);
+})();
+
+/* ============ 内置换肤(8 套经典配色 + 强调色滑杆,观众可切) ============ */
+(function(){
+  const DARK=new Set(['t4','t5','t8']);
+  const bar=document.getElementById('skinbar');
+  const hue=document.getElementById('sbhue');
+  const authorDefault=document.body.className.match(/t\d+/)?.[0]||'t1';
+  const KEY='pc-theme:'+document.title;
+  let cur=authorDefault,base={h:0,s:60,l:50};
+  function hexHsl(hex){
+    const n=parseInt(hex.slice(1),16),r=(n>>16&255)/255,g=(n>>8&255)/255,b=(n&255)/255;
+    const mx=Math.max(r,g,b),mn=Math.min(r,g,b),l=(mx+mn)/2;let h=0,s=0;
+    if(mx!==mn){const d=mx-mn;s=l>.5?d/(2-mx-mn):d/(mx+mn);
+      h=mx===r?(g-b)/d+(g<b?6:0):mx===g?(b-r)/d+2:(r-g)/d+4;h*=60}
+    return{h:Math.round(h),s:Math.round(s*100),l:Math.round(l*100)}
+  }
+  function hslRgb(h,s,l){s/=100;l/=100;const a=s*Math.min(l,1-l);
+    const f=n=>{const k=(n+h/30)%12;return Math.round(255*(l-a*Math.max(-1,Math.min(k-3,9-k,1))))};
+    return f(0)+','+f(8)+','+f(4)}
+  function applyHue(h){
+    document.body.style.setProperty('--accent','hsl('+h+','+base.s+'%,'+base.l+'%)');
+    document.body.style.setProperty('--accent-rgb',hslRgb(h,base.s,base.l));
+    document.body.style.setProperty('--accent-paper','hsl('+h+','+Math.max(base.s-14,20)+'%,87%)');
+  }
+  function setTheme(t){
+    cur=t;document.body.className=t+(DARK.has(t)?' dark-field':'');
+    bar.querySelectorAll('button').forEach(b=>b.classList.toggle('on',b.dataset.t===t));
+    ['--accent','--accent-rgb','--accent-paper'].forEach(v=>document.body.style.removeProperty(v));
+    base=hexHsl(getComputedStyle(document.body).getPropertyValue('--accent').trim());
+    hue.value=base.h;
+    let hs=null;try{hs=localStorage.getItem(KEY+':hue:'+t)}catch(e){}
+    if(hs!==null&&+hs!==base.h){hue.value=hs;applyHue(+hs)}
+    try{localStorage.setItem(KEY,t)}catch(e){}
+  }
+  hue.addEventListener('input',()=>{applyHue(+hue.value);try{localStorage.setItem(KEY+':hue:'+cur,hue.value)}catch(e){}});
+  bar.querySelectorAll('button').forEach(b=>b.addEventListener('click',()=>setTheme(b.dataset.t)));
+  document.getElementById('sbfold').addEventListener('click',()=>bar.classList.toggle('folded'));
+  addEventListener('keydown',e=>{if(e.key>='1'&&e.key<='8')setTheme('t'+e.key)});
+  let saved=null;try{saved=localStorage.getItem(KEY)}catch(e){}
+  setTheme(saved&&document.querySelector('[data-t='+saved+']')?saved:authorDefault);
+})();
+</script>
+</body>
+</html>
