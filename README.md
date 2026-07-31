@@ -9,7 +9,7 @@
 - **10 种布局骨架**:封面(居中海报式)/ 幕封 / 金句 / 三卡 / 左文右图(支持 .flip 镜像)/ 流程 / 对比 / 数据 / 清单 / 收束
 - **剪纸工艺系统**:手剪轮廓纸片、剪贴字标题(每字一张小纸片)、撕纸山景、和纸胶带、订书钉、半调网点、三层纸质感
 - **文字全部真 HTML**:永不乱码;插画由 nano-banana 按「实拍纸艺 diorama」配方生成(可选)
-- **一键导出 PPTX**:`python3 scripts/export-pptx.py deck.html --theme t3`
+- **可编辑 PPTX 导出**:`python3 scripts/export-pptx-editable.py deck.html --theme t3`——三层分解(背景/纸片独立图形/真文本框),在 PowerPoint 里改字、挪纸片、拉纸片都行
 
 ## 用法
 
@@ -21,7 +21,7 @@
 SKILL.md          ← agent 工作流(必读入口)
 assets/template.html   ← 完整可运行模板(10 示例页 = 布局全菜单)
 references/       ← 配色 / 布局 / 工艺 / 插画配方 / 检查清单
-scripts/export-pptx.py ← HTML → 16:9 PPTX
+scripts/export-pptx-editable.py ← HTML → 可编辑 PPTX(三层分解)
 ```
 
 ## 公众号工作流(v1.2 新增)

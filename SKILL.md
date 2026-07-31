@@ -63,11 +63,10 @@ template.html 完整可运行,内置 7 个示例页展示全部工艺。然后:
 **要 PPTX?** 用户要 PowerPoint 文件时:
 
 ```bash
-python3 <SKILL_DIR>/scripts/export-pptx-editable.py deck.html --theme t15 -o 分享.pptx   # 可编辑版(默认推荐)
-python3 <SKILL_DIR>/scripts/export-pptx.py deck.html --theme t15 -o 分享.pptx            # 纯图版(备用)
+python3 <SKILL_DIR>/scripts/export-pptx-editable.py deck.html --theme t15 -o 分享.pptx
 ```
 
-**可编辑版(混合导出)**:装饰层(底纹/纸片/撕边)逐页烤成背景图,文字提取成 PPTX 真文本框(位置/字号/颜色/旋转对位)——风格不变,**每段文字都能在 PowerPoint/Keynote 里直接改**。边界:改字 ✅;改版式/配色回 HTML 重导;剪贴字标题每字压在烤死的纸片上,等长换字完美、大改字数会和纸片错位;马克笔垫色烤在背景里不跟随文字变长。**纯图版**:每页整页截图,零对位风险,交付终稿用。两者都依赖 python-pptx + 本机 Chrome。
+**三层分解导出**:背景=底纹装饰截图;**每张纸片=独立图片形状**(可选中/拖动/拉伸,纹理跟着变);文字=真文本框(位置/字号/颜色/旋转对位)。所以在 PowerPoint/Keynote 里:改字 ✅、挪纸片 ✅、文字变长把纸片拉大 ✅——版式可以继续调。边界:换配色/加新页回 HTML 重导;纯 CSS 色块元素(轻量版少数)仍烤在背景;马克笔垫色不跟随文字。依赖 python-pptx + 本机 Chrome。
 
 ## 工作流 B · 公众号排版 + 配图(✅ 2026-07-29 实测验收)
 
