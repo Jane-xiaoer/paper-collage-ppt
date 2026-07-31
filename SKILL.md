@@ -1,6 +1,6 @@
 ---
 name: paper-collage-ppt
-description: 剪纸拼贴风格的一体化内容产线:①横向翻页网页 PPT(单 HTML,14 套艺术史配色+内置换肤面板+强调色滑杆,10 种布局,剪贴字/撕纸山景/胶带订书钉工艺,文字真 HTML 永不乱码,可导出 PPTX);②公众号文章剪纸排版+配图(接 wechat-publisher 推草稿)。插画统一用 nano-banana「实拍纸艺 diorama」配方。当用户说"剪纸 PPT""剪纸风演示""拼贴风 PPT""纸艺幻灯片""paper collage deck",或"剪纸风排版""剪纸公众号""把这篇用剪纸风发公众号"时使用。风格体系继承 paper-collage-ad(广告视频版)。
+description: 生成「剪纸拼贴 / 手工纸艺」风格的横向翻页网页 PPT(单 HTML 文件):14 套艺术史经典配色 + deck 内置一键换肤面板 + 强调色滑杆 + 20 种布局(封面/目录/幕封/金句/三卡/图文/流程/对比/数据/清单/时间轴/团队/双栏/四宫格/表格/大图/问答/进度/图解/收尾),文字全部真 HTML 永不乱码,可导出可编辑 PPTX。当用户说"剪纸 PPT""剪纸风演示""拼贴风 PPT""纸艺幻灯片""paper collage deck"时使用。
 ---
 
 # Paper Collage PPT · 剪纸拼贴演示
@@ -38,7 +38,7 @@ cp <SKILL_DIR>/assets/template.html "项目/XXX/ppt/index.html"
 template.html 完整可运行,内置 7 个示例页展示全部工艺。然后:
 
 1. 立刻替换 `<title>` 等 `[必填]` 占位
-2. 打开 `references/layouts.md`,按大纲从 **10 种布局骨架**里挑,整段粘贴改文案——**不要从零写 slide,不要发明新类名**
+2. 打开 `references/layouts.md`,按大纲从 **20 种布局骨架**里挑,整段粘贴改文案——**不要从零写 slide,不要发明新类名**
 3. 纸片工艺(手剪轮廓/pin 包裹/剪贴字/撕边/山景/data-drop 入场)的规矩在 layouts.md 顶部「手工感五铁律」和 `references/paper-craft-css.md` 六条铁律,写每页时遵守
 4. 微调只改 inline style(vw/vh 单位)
 
@@ -68,16 +68,6 @@ python3 <SKILL_DIR>/scripts/export-pptx-editable.py deck.html --theme t15 -o 分
 
 **三层分解导出**:背景=底纹装饰截图;**每张纸片=独立图片形状**(可选中/拖动/拉伸,纹理跟着变);文字=真文本框(位置/字号/颜色/旋转对位)。所以在 PowerPoint/Keynote 里:改字 ✅、挪纸片 ✅、文字变长把纸片拉大 ✅——版式可以继续调。边界:换配色/加新页回 HTML 重导;纯 CSS 色块元素(轻量版少数)仍烤在背景;马克笔垫色不跟随文字。依赖 python-pptx + 本机 Chrome。
 
-## 工作流 B · 公众号排版 + 配图(✅ 2026-07-29 实测验收)
-
-用户要发公众号(而不是做 PPT)时走这条,不重复造发布轮子——本 skill 是 `wechat-publisher` 的风格插件:
-
-1. **配图规划**:通读文章 md,按 `references/wechat-image-prompts.md` 选位表定封面 1 张 + 正文 2-4 张,规划先给用户过目(图是最贵返工点)
-2. **生成插画**:diorama 配方同 PPT(`references/image-prompts.md`),公众号差异:一律横屏/方图、no text、暖色系(禁蓝 SOP)
-3. **排版**:标准 markdown 即可,主题二选一——**`paper-collage-artposter`(艺术史海报版,深炭底+米卡宋体撕边标题条+藏蓝/芥黄/砖红,Jane 海报同款,默认推荐)** 或 `paper-collage`(暖色浅底版);两者都已真纸资产化(微信 CDN),加粗=马克笔垫色;关键位置按 `references/wechat-components.md` 嵌 raw HTML 组件——**只许 `<div>/<b>/<img>`,禁 span/section/class**(微信管线约束),遵守节制限额
-4. **传图**:`python3 <SKILL_DIR>/scripts/upload-body-images.py 文章.md`(正文本地图→微信 CDN,≤1MB 自动压;先 --dry-run 看清单)
-5. **推草稿**:`<你的公众号发布管线> 文章.md --theme paper-collage-artposter --cover 封面.jpg`——只到草稿箱,发布永远由用户在后台手动点
-
 ## 资源导览
 
 ```
@@ -87,18 +77,14 @@ paper-collage-ppt/
 │   └── template.html             ← 完整可运行模板 v2(7 示例页 = 工艺全展示)
 ├── scripts/
 │   ├── export-pptx.py            ← HTML deck → 16:9 PPTX(逐页截图,可 --theme 指定配色)
-│   └── upload-body-images.py     ← 公众号正文本地图 → 微信 CDN(≤1MB 自动压)
 └── references/
     ├── themes.md                 ← 14 套艺术史配色总表 + 换肤/滑杆机制 + 插画调色板联动表
-    ├── layouts.md                ← 10 种布局骨架 + 节奏规划 + 手工感五铁律
+    ├── layouts.md                ← 20 种布局骨架 + 节奏规划 + 手工感五铁律
     ├── paper-craft-css.md        ← 剪纸 CSS 工艺分解(v2) + 六条不许动的铁律
     ├── image-prompts.md          ← nano 纸艺 diorama 配方(PPT 版,强制 no text)
-    ├── checklist.md              ← P0/P1/P2 交付检查清单(PPT)
-    ├── wechat-components.md      ← 公众号剪纸组件库(div-only)+ 微信管线三条硬约束
-    └── wechat-image-prompts.md   ← 公众号配图差异(横屏/封面裁切/选位表)
+    └── checklist.md              ← P0/P1/P2 交付检查清单
 ```
 
-关联:公众号主题 JSON 在 `wechat-publisher/themes/paper-collage.json`(包豪斯暖色);发布陷阱大全在 `wechat-publisher/GOTCHAS.md`。
 
 **加载顺序**:SKILL.md → (Step 2 后) themes.md → layouts.md → 动手写页 → (要配图) image-prompts.md → checklist.md。paper-craft-css.md 在需要微调样式或加组件时查。
 
