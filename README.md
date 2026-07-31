@@ -1,6 +1,6 @@
-# Paper Collage PPT · 剪纸拼贴演示
+# 小耳剪纸风 · Xiaoer Paper Collage PPT
 
-把一份大纲变成「剪纸拼贴」风格的单文件网页 PPT:内容像剪好的纸片一张张贴在纸面上,翻页时逐格「贴」上来(定格动画手感)。An agent skill that turns an outline into a paper-collage style single-file HTML deck.
+把一份大纲变成「剪纸拼贴」风格的单文件网页 PPT:内容像剪好的纸片一张张贴在纸面上,翻页时逐格「贴」上来(定格动画手感)。An agent skill by **Xiaoer(小耳)** that turns an outline into a paper-collage style single-file HTML deck.
 
 ## 特性
 
@@ -31,6 +31,20 @@ scripts/export-pptx-editable.py ← HTML → 可编辑 PPTX(三层分解)
 ## 血统
 
 视觉体系来自 [paper-collage-ad](https://github.com/Jane-xiaoer/paper-collage-ad-codex)(剪纸拼贴广告视频 skill)的实战配方。两条硬教训直接继承:AI 渲染文字必乱码,精确内容一律真 HTML;工艺正确 ≠ 好看,美感层绝不能省。
+
+
+## 关于小耳 · About Xiaoer
+
+这套「小耳剪纸风」由 **小耳(Xiaoer)** 设计制作——一个用 AI 做点好玩的的独立创作者。
+
+- 🏠 主站:[xiaoerai.xyz](https://xiaoerai.xyz)
+- 🧰 工具墙:[tools.xiaoerai.xyz](https://tools.xiaoerai.xyz)
+- 🐦 X:[@xiaoerzhan](https://x.com/xiaoerzhan)
+- 💻 GitHub:[@Jane-xiaoer](https://github.com/Jane-xiaoer)
+
+姊妹项目:[paper-collage-ad](https://github.com/Jane-xiaoer/paper-collage-ad-codex)(剪纸广告视频)· [paper-collage-ppt](https://github.com/Jane-xiaoer/paper-collage-ppt)(轻量版)· [paper-collage-cardstock](https://github.com/Jane-xiaoer/paper-collage-cardstock)(卡纸版)
+
+Made with 👂 by 小耳
 
 ## License
 

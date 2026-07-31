@@ -1,9 +1,9 @@
 ---
 name: paper-collage-ppt
-description: 生成「剪纸拼贴 / 手工纸艺」风格的横向翻页网页 PPT(单 HTML 文件):14 套艺术史经典配色 + deck 内置一键换肤面板 + 强调色滑杆 + 20 种布局(封面/目录/幕封/金句/三卡/图文/流程/对比/数据/清单/时间轴/团队/双栏/四宫格/表格/大图/问答/进度/图解/收尾),文字全部真 HTML 永不乱码,可导出可编辑 PPTX。当用户说"剪纸 PPT""剪纸风演示""拼贴风 PPT""纸艺幻灯片""paper collage deck"时使用。
+description: 「小耳剪纸风(Xiaoer Paper Collage)」——小耳出品:生成剪纸拼贴风格的横向翻页网页 PPT(单 HTML 文件),14 套艺术史经典配色 + deck 内置一键换肤面板 + 强调色滑杆 + 20 种布局,文字全部真 HTML 永不乱码,可导出可编辑 PPTX。当用户说"小耳剪纸风""剪纸 PPT""剪纸风演示""拼贴风 PPT""纸艺幻灯片""paper collage deck"时使用。
 ---
 
-# Paper Collage PPT · 剪纸拼贴演示
+# 小耳剪纸风 · Xiaoer Paper Collage PPT
 
 把一份大纲或文章变成「剪纸拼贴」风格的单文件网页 PPT:所有内容像剪好的纸片一张张贴在纸面上,翻页时逐格「贴」上来(定格动画手感),需要画面的页面配 nano 生成的手工纸艺插画。
 
