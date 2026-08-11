@@ -1,0 +1,103 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<title>素材筛选台 · 点掉不要的</title>
+<style>
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{background:#EEF4FA; color:#22303B; padding:26px 30px 130px;
+       font-family:"PingFang SC",-apple-system,system-ui,sans-serif}
+  h1{font-size:19px; letter-spacing:.02em}
+  .sub{font-size:12.5px; color:#5A6B78; margin-top:7px; line-height:1.75}
+  h2{font-size:13px; letter-spacing:.14em; color:#5A6B78; margin:30px 0 12px;
+     border-top:1px solid #CBD8E3; padding-top:12px}
+  .grid{display:grid; grid-template-columns:repeat(auto-fill,minmax(132px,1fr)); gap:12px}
+  .cell{background:#fff; border:2px solid transparent; border-radius:10px; padding:10px 8px 8px;
+        cursor:pointer; text-align:center; transition:.15s; position:relative; user-select:none}
+  .cell:hover{border-color:#9CC4E4}
+  .cell img{width:100%; height:96px; object-fit:contain; object-position:center bottom; display:block}
+  .cell .nm{font-family:ui-monospace,monospace; font-size:10.5px; color:#5A6B78; margin-top:7px;
+            letter-spacing:.04em}
+  .cell.kill{border-color:#E4573D; background:#FDEEEB; opacity:.55}
+  .cell.kill::after{content:'删除'; position:absolute; top:6px; right:6px; font-size:10px;
+                    background:#E4573D; color:#fff; padding:2px 7px; border-radius:20px;
+                    letter-spacing:.06em}
+  .cell.kill img{filter:grayscale(1)}
+  #bar{position:fixed; left:0; right:0; bottom:0; background:#fff; border-top:1px solid #CBD8E3;
+       padding:14px 30px; display:flex; align-items:center; gap:18px;
+       box-shadow:0 -6px 24px rgba(30,60,90,.10)}
+  #stat{font-size:13px}
+  #stat b{font-size:17px; margin:0 3px}
+  #out{flex:1; font-family:ui-monospace,monospace; font-size:11px; color:#5A6B78;
+       background:#F2F6FA; border:1px solid #DDE6EE; border-radius:6px; padding:9px 11px;
+       max-height:56px; overflow:auto; line-height:1.6}
+  button{font:inherit; font-size:13px; padding:9px 18px; border-radius:6px; cursor:pointer;
+         border:1px solid #22303B; background:#22303B; color:#fff; white-space:nowrap}
+  button.ghost{background:#fff; color:#22303B}
+</style>
+</head>
+<body>
+
+<h1>素材筛选台</h1>
+<div class="sub">点一下＝标记删除，再点＝恢复。挑完点右下「复制删除清单」，把结果发我，我按清单清库并补生成。<br>
+判断标准就一条：<b>放到画面上会不会拉低整套的档次</b>。</div>
+
+<div id="app"></div>
+
+<div id="bar">
+  <div id="stat">保留 <b id="keep">0</b> · 删除 <b id="kill">0</b></div>
+  <div id="out">（尚未标记）</div>
+  <button class="ghost" onclick="reset()">全部恢复</button>
+  <button onclick="copyList()">复制删除清单</button>
+</div>
+
+<script>
+// 与 assets/clay/ 的真实文件一一对应。删除素材后必须同步这里，禁止筛选台出现 404。
+const CLAY_NEW = ['dop_button','dop_cam','dop_heart','dop_latte','dop_phone','dop_trophy','girl_dance','girl_photo','girl_plant','girl_skate','girl_street','pop_boba','pop_boombox','pop_cam','pop_forest','pop_hp','pop_pad','pop_plant','pop_skate','pop_sneaker','pop_vinyl2'];
+const CLAY = ['balloon','bird','bolt','cactus','check','cloud','coffee','coolcat','cube','dj','donut','drop','flower','headphone','laptop','moon','plane','planet','rainbow','reader','ring','shooter','skater','sneaker','spiral','stack','wave'];
+const RETRO = ['play','mana','youwin','race','offer','niceweek','awesome','cool','future'];
+const killed = new Set();
+
+function section(title, list, dir){
+  const h = document.createElement('h2'); h.textContent = title;
+  const g = document.createElement('div'); g.className = 'grid';
+  list.forEach(k=>{
+    const c = document.createElement('div'); c.className='cell'; c.dataset.k = dir+'/'+k;
+    c.innerHTML = `<img src="./assets/${dir}/${k}.png" alt=""><div class="nm">${k}</div>`;
+    c.onclick = ()=>{
+      const id = c.dataset.k;
+      killed.has(id) ? killed.delete(id) : killed.add(id);
+      c.classList.toggle('kill'); render();
+    };
+    g.appendChild(c);
+  });
+  const app = document.getElementById('app');
+  app.appendChild(h); app.appendChild(g);
+}
+section(`★ 新生成 · ${CLAY_NEW.length} 件（女孩角色 / 多巴胺 / 游戏感）`, CLAY_NEW, 'clay');
+section(`原有 3D · ${CLAY.length} 件`, CLAY, 'clay');
+section('复古贴纸 · 9 件', RETRO, 'stickers/retro');
+
+function render(){
+  const total = CLAY_NEW.length + CLAY.length + RETRO.length;
+  document.getElementById('kill').textContent = killed.size;
+  document.getElementById('keep').textContent = total - killed.size;
+  document.getElementById('out').textContent =
+    killed.size ? [...killed].join('  ') : '（尚未标记）';
+}
+function reset(){
+  killed.clear();
+  document.querySelectorAll('.cell.kill').forEach(c=>c.classList.remove('kill'));
+  render();
+}
+function copyList(){
+  const t = killed.size ? [...killed].join(' ') : '（无）';
+  navigator.clipboard.writeText(t).then(()=>{
+    const b = event.target; const o = b.textContent;
+    b.textContent = '已复制 ✓'; setTimeout(()=>b.textContent=o, 1400);
+  });
+}
+render();
+</script>
+</body>
+</html>

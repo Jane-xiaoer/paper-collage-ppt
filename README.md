@@ -1,8 +1,19 @@
-# 小耳剪纸风 · Xiaoer Paper Collage PPT
+# 小耳 PPT 风格馆 · Xiaoer Deck Style Gallery
 
-把一份大纲变成「剪纸拼贴」风格的单文件网页 PPT:内容像剪好的纸片一张张贴在纸面上,翻页时逐格「贴」上来(定格动画手感)。An agent skill by **Xiaoer(小耳)** that turns an outline into a paper-collage style single-file HTML deck.
+把一份大纲变成有完整视觉语言的网页 PPT。项目从「小耳剪纸风」起步，现在加入「好奇果冻 3D」，并采用独立风格目录继续扩展更多 3D 方向。An agent skill by **Xiaoer(小耳)** for creating expressive HTML presentation decks in multiple visual styles.
 
-## 特性
+## 选择风格
+
+通过 [`style-gallery.html`](./style-gallery.html) 进入风格馆，或访问 GitHub Pages（启用后：<https://jane-xiaoer.github.io/paper-collage-ppt/>）。也可以直接打开对应模板：
+
+| 风格 | 视觉特征 | 适合 | 入口 |
+|---|---|---|---|
+| **小耳剪纸风** | 手剪纸片、艺术史配色、定格贴入 | 故事、课程、生活方式分享 | [`assets/template.html`](./assets/template.html) |
+| **好奇果冻 3D** | 半透果冻字、黏土多巴胺物件、技术网格 | 设计、创意、年轻化产品演示 | [`styles/haoqi-3d/demo.html`](./styles/haoqi-3d/demo.html) |
+
+> 好奇 3D 使用 ES Modules，需要通过 HTTP 服务预览：`python3 -m http.server 8788`。
+
+## 剪纸风特性
 
 - **单文件 HTML**:双击浏览器即放映(←→ / 滚轮 / 触屏 / 圆点导航),断网可用
 - **14 套艺术史经典配色**:马蒂斯剪纸 / 蒙德里安 / 包豪斯 / 中国大红剪纸 / 克莱因蓝 / 报纸黑白×印刷红 / 苔绿清晨 / 午夜墨×薄荷 / 莫奈睡莲 / 梵高星夜 / 北斋浪 / 莫兰迪 / 敦煌壁画 / 波普艺术——观众可用左下「✂ 风格」面板一键换肤,附强调色滑杆(只改色相,拖不出脏色)
@@ -13,15 +24,30 @@
 
 ## 用法
 
-这是一个 agent skill(Claude Code / Codex / 任意支持 SKILL.md 的框架):把本仓库放进 skills 目录,对 agent 说「用剪纸风格做个分享」。手动使用:复制 `assets/template.html`,按 `references/layouts.md` 挑布局填内容即可。
+这是一个 agent skill（Claude Code / Codex / 任意支持 SKILL.md 的框架）。把本仓库放进 skills 目录后，可以说：
+
+- 「用小耳剪纸风做个分享」
+- 「用好奇果冻 3D 做一个设计类 deck」
+- 「先让我从现有 PPT 风格里选一个」
+
+手动使用：先打开 `style-gallery.html` 选风格。剪纸风复制 `assets/template.html`；3D 风格按对应目录的 `README.md` 使用。
 
 ## 结构
 
-```
-SKILL.md          ← agent 工作流(必读入口)
-assets/template.html   ← 完整可运行模板(10 示例页 = 布局全菜单)
-references/       ← 配色 / 布局 / 工艺 / 插画配方 / 检查清单
-scripts/export-pptx-editable.py ← HTML → 可编辑 PPTX(三层分解)
+```text
+style-gallery.html          ← 风格选择入口
+SKILL.md                    ← agent 路由与工作流
+assets/template.html        ← 小耳剪纸风完整模板
+styles/
+├── README.md               ← 新风格扩展规范
+└── haoqi-3d/
+    ├── demo.html           ← 20 页好奇果冻 3D 示例
+    ├── picker.html         ← 3D 素材筛选台
+    ├── README.md           ← 使用方法与设计约束
+    ├── assets/             ← 风格专属素材
+    └── vendor/             ← 本地 Three.js 运行时
+references/                 ← 剪纸风配色 / 布局 / 工艺 / 检查清单
+scripts/export-pptx-editable.py ← 剪纸 HTML → 可编辑 PPTX
 ```
 
 ## 公众号工作流(v1.2 新增)
