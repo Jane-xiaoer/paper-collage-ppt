@@ -1,0 +1,50 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>小耳 PPT 风格馆 · Xiaoer Deck Styles</title>
+<style>
+  :root{--ink:#111;--paper:#f4f0e7;--blue:#bedeef;--accent:#2f7fd8;--line:rgba(17,17,17,.18)}
+  *{box-sizing:border-box}html,body{margin:0;min-height:100%;font-family:-apple-system,"Helvetica Neue","PingFang SC",sans-serif;color:var(--ink)}
+  body{background:linear-gradient(135deg,#f7f1e7 0 48%,#c9e3f2 48% 100%);padding:4.5vw}
+  header{display:flex;align-items:flex-end;gap:3vw;border-bottom:1px solid var(--line);padding-bottom:2.2vw}
+  h1{font-size:clamp(42px,6vw,92px);line-height:.9;letter-spacing:-.055em;margin:0;max-width:760px}
+  header p{margin-left:auto;max-width:360px;font-size:14px;line-height:1.7;color:#495865}
+  .grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:1.5vw;margin-top:2vw}
+  .card{position:relative;min-height:430px;padding:2.1vw;border:1px solid var(--line);overflow:hidden;text-decoration:none;color:inherit;display:flex;flex-direction:column;transition:.28s cubic-bezier(.2,.7,.3,1)}
+  .card:hover{transform:translateY(-8px);box-shadow:0 22px 50px rgba(35,57,72,.16)}
+  .paper{background:#f4e9cf}.jelly{background:#bdddef}
+  .tag{font:12px/1.2 ui-monospace,SFMono-Regular,Menlo,monospace;letter-spacing:.14em}
+  .card h2{font-size:clamp(38px,4.5vw,68px);line-height:.95;letter-spacing:-.04em;margin:auto 0 12px;max-width:520px}
+  .card p{font-size:14px;line-height:1.65;max-width:480px;margin:0;color:#46545e}
+  .go{position:absolute;right:2vw;bottom:2vw;width:48px;height:48px;border:1px solid;border-radius:50%;display:grid;place-items:center;font-size:24px}
+  .paper::before{content:'✂';position:absolute;right:8%;top:12%;font-size:120px;transform:rotate(12deg);filter:drop-shadow(7px 10px 0 rgba(0,0,0,.12))}
+  .jelly::before{content:'hello';position:absolute;right:5%;top:12%;font-size:98px;font-weight:800;color:#6498e5;text-shadow:0 0 20px rgba(255,255,255,.9);transform:rotate(-5deg)}
+  .soon{grid-column:1/-1;min-height:130px;background:rgba(255,255,255,.28);border-style:dashed;justify-content:center}
+  .soon h2{font-size:26px;margin:0 0 8px}.soon p{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;letter-spacing:.08em}
+  footer{display:flex;justify-content:space-between;margin-top:2vw;font:11px/1.5 ui-monospace,SFMono-Regular,Menlo,monospace;letter-spacing:.12em}
+  @media(max-width:760px){body{padding:22px}.grid{grid-template-columns:1fr;gap:16px}.card{min-height:340px;padding:24px}.soon{grid-column:auto}header{display:block}header p{margin:22px 0 0}.jelly::before{font-size:62px}.paper::before{font-size:82px}}
+</style>
+</head>
+<body>
+<header>
+  <div><div class="tag">XIAOER DECK STYLE GALLERY · 02 STYLES</div><h1>选一种味道，<br>再开始讲故事。</h1></div>
+  <p>同一个演示工具箱，多套完整视觉语言。每种风格拥有自己的模板、素材、动效与设计约束，后续 3D 风格会继续加入。</p>
+</header>
+<main class="grid">
+  <a class="card paper" href="./assets/template.html">
+    <div class="tag">STYLE 01 · PAPER COLLAGE</div>
+    <h2>小耳剪纸风</h2>
+    <p>纸艺拼贴、艺术史配色、逐格贴入动画。适合故事、课程、生活方式与有温度的分享。</p><span class="go">→</span>
+  </a>
+  <a class="card jelly" href="./styles/haoqi-3d/demo.html">
+    <div class="tag">STYLE 02 · HAOQI 3D</div>
+    <h2>好奇果冻 3D</h2>
+    <p>淡蓝天空、暖光、半透果冻字、黏土多巴胺物件与技术网格。适合设计、创意与年轻化产品演示。</p><span class="go">→</span>
+  </a>
+  <section class="card soon"><h2>MORE 3D STYLES, COMING NEXT.</h2><p>styles/&lt;style-id&gt;/demo.html · 独立运行 · 可持续扩展</p></section>
+</main>
+<footer><span>MADE WITH 👂 BY 小耳</span><span>GITHUB · JANE-XIAOER</span></footer>
+</body>
+</html>

@@ -1,0 +1,1028 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<title>好奇 · 视觉风格 / HAOQI VISUAL LANGUAGE</title>
+<style>
+  /* ============================================================
+     配色全部取自 haoqi.design 首屏量化结果，不是手调
+     天空 #BFDDF0 H203 S.62 L.85 / 暖光 #FEF7EF H32 S.88 L.97
+     半透蓝三档 #8BADD6 #9FBAD8 #B2C1D3 / 强调 #3080D8 / 黑 #000
+     ============================================================ */
+  :root{
+    --sky:#BFDDF0; --warm:#FEF7EF; --paper:#FBFAF4;
+    --b1:#8BADD6; --b2:#9FBAD8; --b3:#B2C1D3;
+    --blue:#3080D8; --ink:#000000; --dim:#5B6672;
+    --mono:ui-monospace,"SF Mono",SFMono-Regular,Menlo,monospace;
+    --sans:-apple-system,"Helvetica Neue","PingFang SC",system-ui,sans-serif;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  html,body{height:100%;overflow:hidden}
+  body{background:var(--sky); color:var(--ink); font-family:var(--sans)}
+  canvas#cv{position:fixed; inset:0; display:block; width:100%; height:100%}
+
+  /* ---------- 版式骨架：网格 + 十字 + mono 边栏（好奇的技术感来源） ---------- */
+  #frame{position:fixed; inset:0; pointer-events:none; z-index:2}
+  .gl{position:absolute; background:var(--ink); opacity:.09}
+  .gl.v{top:0; bottom:0; width:1px} .gl.h{left:0; right:0; height:1px}
+  .xm{position:absolute; width:11px; height:11px; opacity:.42}
+  .xm::before,.xm::after{content:''; position:absolute; background:var(--ink)}
+  .xm::before{left:5px; top:0; width:1px; height:11px}
+  .xm::after{top:5px; left:0; height:1px; width:11px}
+  #top{position:absolute; left:3.4vw; right:3.4vw; top:2.6vh; display:flex; align-items:baseline;
+       font-family:var(--mono); font-size:.72vw; letter-spacing:.14em}
+  #top .brand{font-weight:700; letter-spacing:.08em}
+  #top .nav{margin-left:auto; display:flex; gap:2.2vw; opacity:.62}
+  #bot{position:absolute; left:3.4vw; right:3.4vw; bottom:2.4vh; display:flex; align-items:center;
+       gap:1.6vw; font-family:var(--mono); font-size:.7vw; letter-spacing:.14em; color:#54636F}
+  #bot .rt{margin-left:auto}
+  #b-scheme{display:flex; gap:.5vw; margin-left:1.4vw; pointer-events:auto}
+  #b-scheme b{font-weight:400; cursor:pointer; opacity:.42; padding:.2vh .5vw;
+              border:1px solid transparent; transition:.18s; letter-spacing:.14em}
+  #b-scheme b:hover{opacity:.75}
+  #b-scheme b.on{opacity:1; border-color:currentColor}
+  #prog{width:9vw; height:2px; background:var(--ink); opacity:.16; position:relative}
+  #prog i{position:absolute; inset:0 auto 0 0; background:var(--ink); min-width:2px;
+          transition:width .55s cubic-bezier(.2,.7,.3,1)}
+
+  /* ---------- 内容层：真 DOM ---------- */
+  #txt{position:fixed; inset:0; pointer-events:none; z-index:3;
+       padding:11vh 3.4vw 12vh; display:flex; flex-direction:column}
+  .kick{font-family:var(--mono); font-size:.74vw; letter-spacing:.30em; color:#54636F}
+  /* 好奇的标题语汇：全大写无衬线、字重极粗、字距压紧、压在版面下沿 */
+  .big{font-family:var(--sans); font-weight:800; line-height:.98; letter-spacing:-.022em;
+       font-size:5.6vw; margin-top:auto}
+  .zh{font-family:"PingFang SC",var(--sans); font-weight:700;
+      letter-spacing:-.02em; line-height:1.06}   /* 中文单独设，拉丁的 -.022em+0.94 行距会贴字 */
+  .lead{font-size:1.0vw; line-height:1.9; color:#485866; max-width:27vw; margin-top:2.2vh}
+  .rule{width:100%; height:1px; background:var(--ink); opacity:.16; margin:2.6vh 0}
+
+  /* 色板页 */
+  .sw-row{display:flex; gap:.7vw; margin-top:auto; margin-bottom:3vh; align-items:stretch}
+  .sw{display:flex; flex-direction:column; gap:.9vh; min-width:0}
+  .sw .chip{height:17vh; border-radius:2px}   /* 五块统一无描边 */
+  .sw .hex{font-family:var(--mono); font-size:.72vw; letter-spacing:.08em}
+  .sw .role{font-size:.72vw; opacity:.55}
+  /* 字体页 */
+  .type-demo{margin-top:auto; margin-bottom:2vh}
+  .type-demo .l1{font-size:5.0vw; font-weight:800; letter-spacing:-.022em; line-height:1}
+  .type-demo .l2{font-family:var(--mono); font-size:1.05vw; letter-spacing:.26em; margin-top:2.4vh; opacity:.62}
+  .type-demo .l3{font-size:1.6vw; font-weight:700; margin-top:1.6vh; letter-spacing:.02em}
+  .specs{display:flex; gap:2.6vw; margin-top:3vh; font-family:var(--mono);
+         font-size:.72vw; letter-spacing:.1em; opacity:.55}
+  /* 要素清单 */
+  .list{margin-top:auto; margin-bottom:2vh; display:grid; grid-template-columns:1fr 1fr;
+        gap:2.2vh 2.6vw; max-width:46vw}
+  .list .it{border-top:1px solid rgba(0,0,0,.18); padding-top:1.1vh}
+  .list .it em{font-style:normal; font-family:var(--mono); font-size:.68vw;
+               letter-spacing:.16em; opacity:.45}
+  .list .it b{display:block; font-size:1.15vw; margin:.5vh 0 .4vh}
+  .list .it span{font-size:.82vw; opacity:.55; line-height:1.65}
+
+  /* ---------- 贴纸层：SVG 自绘 + CC0 剪贴图，漂浮着 ---------- */
+  #stk{position:fixed; inset:0; pointer-events:none; z-index:4}
+  .st{position:absolute; transform-origin:50% 50%;
+      filter:drop-shadow(0 4px 10px rgba(30,50,90,.20)); opacity:0;
+      transform:translate(var(--ix,0),var(--iy,0)) rotate(var(--r,0deg)) scale(.86);
+      transition:opacity .62s cubic-bezier(.2,.7,.3,1), transform .9s cubic-bezier(.16,.84,.24,1)}
+  .go2 .st{opacity:1; transform:translate(0,0) rotate(var(--r,0deg)) scale(1)}
+  .st.clay{filter:drop-shadow(0 10px 22px rgba(40,70,110,.18))}
+  .st img, .st svg{display:block; width:100%; height:auto; animation:float 8.5s ease-in-out 1.05s infinite}
+  .st:nth-child(2n) img{animation-duration:10.5s; animation-delay:1.16s}
+  .st:nth-child(3n) img{animation-duration:7.6s; animation-delay:1.28s}
+  /* die-cut 白描边，贴纸的关键质感 */
+  /* 生成的贴纸自带白色 die-cut 边框，不再叠 CSS 描边 */
+  @keyframes float{
+    0%,100%{transform:translateY(0) rotate(0deg)}
+    50%{transform:translateY(-13px) rotate(1.6deg)}
+  }
+  body.still .st{opacity:1; transform:translate(0,0) rotate(var(--r,0deg)) scale(1); transition:none}
+  body.still .st img,body.still .st svg{animation:none}
+
+  /* ---------- 扩展版式（20 页用，12 种布局）---------- */
+  /* 幕封：超大编号 + 章节名，大量留白，做呼吸 */
+  /* 章节页必须「换气」：满版巨大编号，去掉一切页面构件 */
+  /* 章节页：编号在左、章节名与正文紧贴其右，基线咬合、横向相邻。
+     不叠压（会脏），也不左右对开（会失联）。 */
+
+  /* ===== 章节页：一套干净结构 —— 垂直堆叠，编号/标题/正文左缘对齐，绝不重叠 ===== */
+  .L-section{display:flex; flex-direction:column; align-items:flex-start;
+             justify-content:center; height:100%; padding:0 0 0 7vw}
+  .L-section .idx{font-family:var(--mono); font-size:11vw; line-height:.82; font-weight:700;
+                  letter-spacing:-.04em; color:var(--ink); opacity:.16; margin-bottom:.4vh}
+  .L-section .big{font-size:5.4vw; margin:0}
+  .L-section .lead{max-width:26vw; margin:2vh 0 0}
+  /* 五张章节页的差异：编号体量与整组落点，全部在不重叠的前提下变化 */
+  body.P6  .L-section{align-items:flex-end; text-align:right; padding:0 7vw 0 0}
+  body.P6  .L-section .lead{margin-left:auto}
+  body.P9  .L-section{align-items:center; text-align:center; padding:0}
+  body.P9  .L-section .idx{font-size:16vw; opacity:.13}
+  body.P9  .L-section .big{font-size:4.4vw}
+  body.P9  .L-section .lead{margin-left:auto; margin-right:auto}
+  body.P13 .L-section .idx{font-size:6.2vw; opacity:.36}
+  body.P13 .L-section .big{font-size:7vw}
+  body.P16 .L-section{justify-content:flex-end; padding-bottom:16vh}
+  body.P16 .L-section .idx{font-size:8vw; opacity:.24}
+
+  /* ---------- 信息构件：每种内容使用自己的真实 PPT 结构 ---------- */
+  .toc{display:grid; grid-template-columns:repeat(5,1fr); width:100%; margin-top:auto;
+       border-top:1px solid rgba(0,0,0,.22); border-bottom:1px solid rgba(0,0,0,.22)}
+  .toc .tc{padding:2.2vh 1.1vw 2.5vh; min-height:15vh; border-right:1px solid rgba(0,0,0,.14)}
+  .toc .tc:last-child{border-right:0}.toc em{font:700 2.8vw/1 var(--mono); font-style:normal; opacity:.38}
+  .toc b{display:block; font-size:1.05vw; margin-top:2.2vh}.toc span{font:.64vw/1.5 var(--mono); letter-spacing:.12em; opacity:.58}
+  .toc .tc:first-child{position:relative; background:rgba(255,255,255,.24)}
+  .toc .tc:first-child::before{content:''; position:absolute; left:0; right:0; top:-2px; height:3px; background:var(--blue)}
+  .toc .tc:first-child em{color:var(--blue); opacity:1}
+  .toc .tc:first-child b{font-weight:800}
+  .scale{margin-top:auto}.scale .row{display:flex; align-items:baseline; gap:1.5vw; padding:1.05vh 0; border-bottom:1px solid rgba(0,0,0,.12)}
+  .scale .row i{font:normal .66vw/1 var(--mono); letter-spacing:.12em; color:#5A6B78; width:11vw; flex:none}
+  .pair{display:grid; grid-template-columns:1fr 1fr; gap:3vw; width:100%}
+  .pair .sample{font-size:4vw; font-weight:800; line-height:1}.pair .sample.zh{font-size:3.6vw}
+  .pair .meta{font:.68vw/1.85 var(--mono); letter-spacing:.12em; opacity:.48; margin-top:1.2vh}
+  .galg{width:100%}.grow{display:grid; grid-template-columns:6vw 1fr; align-items:center; gap:1vw; padding:.55vh 0; border-top:1px solid rgba(0,0,0,.10)}
+  .glab{font:.63vw/1 var(--mono); letter-spacing:.14em; color:#5A6B78}.gitems{display:flex; align-items:center; gap:.35vw}
+  .gitems img{height:7.1vh; width:auto; max-width:7vw; object-fit:contain; display:block; transform-origin:center}
+  .stats{display:grid; grid-template-columns:repeat(3,1fr); gap:3vw}.stats .st-i{border-top:2px solid currentColor; padding-top:1.3vh}
+  .stats b{display:block; font-size:5vw; line-height:1; letter-spacing:-.04em}.stats em{display:block; font:normal .68vw/1 var(--mono); letter-spacing:.14em; opacity:.5; margin-top:1.1vh}
+  .stats span{display:block; font-size:.76vw; line-height:1.6; opacity:.55; margin-top:.7vh}
+  .cmp{display:grid; grid-template-columns:1fr 1fr; gap:1.4vw; width:100%}.cmp .cm{min-height:18vh; border:1px solid rgba(0,0,0,.18); padding:2.2vh 1.6vw; text-align:left}
+  .cmp .cm.no{background:rgba(255,255,255,.20); opacity:.7}.cmp b{display:block; font-size:1.2vw; margin-bottom:1.5vh}
+  .cmp span{font-size:.82vw; line-height:1.75; color:#485866}
+  .steps{display:grid; grid-template-columns:repeat(4,1fr); gap:1.5vw}.steps .sp{position:relative; border-top:2px solid currentColor; padding-top:1.4vh}
+  .steps .sp::before{content:''; position:absolute; width:8px; height:8px; border-radius:50%; background:currentColor; top:-5px; left:0}
+  .steps em{font:normal .66vw/1 var(--mono); letter-spacing:.14em; opacity:.45}.steps b{display:block; font-size:1.05vw; margin:1.3vh 0 .7vh}
+  .steps span{font-size:.76vw; line-height:1.6; opacity:.55}
+  .L-quote{align-items:center!important; justify-content:center!important; text-align:center}.L-quote .big{font-family:"PingFang SC",var(--sans); font-size:3.5vw; line-height:1.48; max-width:58vw; margin:0}
+  .L-quote .lead{max-width:36vw; margin-left:auto; margin-right:auto}
+
+  /* P1 封面：文字沉左下，主视觉悬右上 */
+  body.P1 #txt{align-items:flex-start; justify-content:flex-end}
+  /* P2 目录：先给观众一张路线图，再进入五章 */
+  body.P2 #txt{align-items:flex-start; justify-content:flex-start; padding-top:13vh}
+  body.P2 .toc{margin-top:auto; margin-bottom:3vh}
+  /* P2 章节01：编号巨大顶天，章节名与正文贴左缘依次下沉 */
+  /* P3 色板：标题顶部，色板整条出血落到页底 */
+  body.P3 #txt{align-items:flex-start; justify-content:flex-start; padding-top:11vh; padding-bottom:0}
+  body.P3 .chapter-lockup{display:flex; align-items:flex-end; gap:1.3vw; margin-top:1.8vh}
+  body.P3 .chapter-no{font:700 5.4vw/.78 var(--mono); letter-spacing:-.07em; color:var(--blue)}
+  body.P3 .chapter-name{font-size:4.2vw; line-height:.82; margin:0}
+  body.P3 .chapter-thesis{font-size:1.15vw; font-weight:700; margin-top:2.4vh}
+  body.P3 .sw-row{margin-top:auto; margin-bottom:0; width:100%}   /* 色板压底，章节标题留在上方 */
+  /* P4 明度：文字整块推到右缘，右对齐；主体让到左侧 */
+  body.P4 #txt{align-items:flex-end; justify-content:center; text-align:right; padding-right:7vw}
+  body.P4 .lead{margin-left:auto}
+  /* P5 规矩：标题压顶，四条规则沉到右半 */
+  body.P5 #txt{align-items:flex-start; justify-content:space-between; padding-top:13vh; padding-bottom:13vh}
+  body.P5 .items{margin-top:0; margin-left:auto; margin-right:2vw; max-width:42vw}
+  /* P6 章节02：与 P2 镜像 —— 编号与章节名靠右缘 */
+  /* P7 字阶：标题顶左，阶梯表占左 62%，右侧整块留白承接 3D */
+  body.P7 #txt{align-items:flex-start; justify-content:flex-start; padding-top:12vh}
+  body.P7 .scale{margin-top:5vh; margin-bottom:0; width:62%}
+  /* P8 中西：标题上居中，两个大样中央并排，说明压底居中 */
+  body.P8 #txt{align-items:center; justify-content:center; text-align:center}
+  body.P8 .pair{margin:4vh auto 3vh; max-width:52vw}
+  body.P8 .pair .pc{border-left:none; border-top:3px solid currentColor; padding:1.6vh 0 0; text-align:left}
+  body.P8 .lead{margin-left:auto; margin-right:auto; max-width:40vw}
+  /* P9 章节03：编号居中顶天，章节名压在编号腰上 */
+  /* P10 立体：hello 满幅占上方，文字压底居中 */
+  body.P10 #txt{align-items:center; justify-content:flex-end; text-align:center; padding-bottom:9vh}
+  body.P10 .lead{margin:1.6vh auto 0; max-width:40vw}
+  /* P11 素材池：标题顶左，分组网格铺满下方通栏 */
+  body.P11 #txt{align-items:flex-start; justify-content:flex-start; padding-top:11vh; padding-right:5vw}
+  body.P11 .galg{margin-top:4vh}
+  /* P12 三数：标题顶左，三个大数字沉底通栏等距 */
+  body.P12 #txt{align-items:flex-start; justify-content:space-between; padding-top:13vh; padding-bottom:12vh}
+  body.P12 .stats{margin:0; max-width:none; width:64%; gap:0 4vw}
+  /* P13 章节04：编号沉左下，章节名浮右上 —— 对角 */
+  /* P14 骨架：文字靠右缘右对齐，左侧留给标注图 */
+  body.P14 #txt{align-items:flex-end; justify-content:center; text-align:right; padding-right:7vw}
+  body.P14 .items{margin-left:auto; max-width:38vw; text-align:left}
+  /* P15 对比：标题上居中，两栏对比居中并排 */
+  body.P15 #txt{align-items:center; justify-content:center; text-align:center}
+  body.P15 .cmp{margin:4vh auto 0; max-width:56vw; text-align:left}
+  /* P16 章节05：编号偏右下压出画外，章节名贴左缘 */
+  /* P17 四步：标题顶左，四步通栏铺底 */
+  body.P17 #txt{align-items:flex-start; justify-content:space-between; padding-top:13vh; padding-bottom:11vh}
+  body.P17 .steps{margin:0; max-width:none; width:74%}
+  /* P18 金句：全幅居中 */
+  body.P18 #txt{align-items:center; justify-content:center; text-align:center}
+  /* P19 应用：主视觉满幅，文字压在画面左下角、盖住图 */
+  body.P19 #txt{align-items:flex-start; justify-content:flex-end; padding-bottom:11vh}
+  body.P19 .big{font-size:5.2vw}
+  /* P20 收尾：超大字居中，上下对称 */
+  body.P20 #txt{align-items:center; justify-content:center; text-align:center}
+  body.P20 .big{font-size:5.6vw}
+  body.P20 .lead{margin:2.4vh auto 0}
+
+  .anim{opacity:0; transform:translateY(16px)}
+  .go .anim{opacity:1; transform:none;
+    transition:opacity .6s cubic-bezier(.2,.7,.3,1), transform .6s cubic-bezier(.2,.7,.3,1)}
+  .go .big,.go .type-demo,.go .sw-row,.go .list{transition-delay:.08s}
+  /* 静态导出：所有带入场初始态的元素一律强制归位，漏一类就整块空白 */
+  body.still .anim, body.still .items .it, body.still .cards .cd,
+  body.still .steps .sp, body.still .cmp .cm, body.still .gal img,
+  body.still .sw, body.still .stats .st-i, body.still .scale .row{
+    opacity:1!important; transform:none!important; transition:none!important; animation:none!important}
+  body.still #prog i{transition:none!important}
+
+  /* ===== 条目两列制（放在最末，避免再被区间替换误删）===== */
+  .items{margin-top:4.4vh; display:grid; gap:2.6vh 0; max-width:46vw}
+  .items .it{display:grid; grid-template-columns:12vw minmax(0,1fr); column-gap:2vw;
+             align-items:baseline; padding-top:1.4vh; border-top:1px solid rgba(0,0,0,.14)}
+  .items .it > div{grid-column:1}
+  .items .it em{font-style:normal; font-family:var(--mono); font-size:.66vw;
+                letter-spacing:.16em; color:#5A6B78; display:block; margin-bottom:.6vh}
+  .items .it b{display:block; font-size:1.02vw; letter-spacing:.01em; line-height:1.4}
+  .items .it span{grid-column:2; font-size:.86vw; color:#485866; line-height:1.9; display:block}
+  body.still .items .it{opacity:1!important; transform:none!important}
+  /* 色板：底块与背景同色会「不存在」，加一道内描边让它显形；同时不压页脚 */
+  .sw-row{margin-bottom:0}
+  body.P3 #txt{padding-bottom:13vh}   /* 给页脚留出净空，色板标签不再压页脚 */
+  .sw .chip{box-shadow:inset 0 0 0 1px rgba(0,0,0,.10)}
+</style>
+</head>
+<body>
+
+<canvas id="cv"></canvas>
+
+<div id="frame">
+  <div class="gl v" style="left:3.4vw"></div>
+  <div class="gl v" style="right:3.4vw"></div>
+  <div class="gl h" style="top:7.2vh"></div>
+  <div class="gl h" style="bottom:7.2vh"></div>
+  <div class="xm" style="left:3.4vw; top:7.2vh; transform:translate(-50%,-50%)"></div>
+  <div class="xm" style="right:3.4vw; top:7.2vh; transform:translate(50%,-50%)"></div>
+  <div class="xm" style="left:3.4vw; bottom:7.2vh; transform:translate(-50%,50%)"></div>
+  <div class="xm" style="right:3.4vw; bottom:7.2vh; transform:translate(50%,50%)"></div>
+  <div id="top">
+    <span class="brand">HAOQI.STYLE</span>
+    <span class="nav"><span id="t-sec">COVER</span><span>THEME[A]</span><span>SOUND[|]</span></span>
+  </div>
+  <div id="bot">
+    <span id="b-num">01</span><span id="prog"><i style="width:0"></i></span><span id="b-tot">/ 08</span>
+    <span id="b-scheme"></span>
+    <span class="rt" id="b-coord">1600 X 0900 Y</span>
+  </div>
+</div>
+
+<div id="stk"></div>
+<div id="txt"></div>
+
+<script type="importmap">
+{ "imports": { "three": "./vendor/three.module.js", "three/addons/": "./vendor/addons/" } }
+</script>
+
+<script type="module">
+import * as THREE from 'three';
+import { RoomEnvironment } from 'three/addons/environments/RoomEnvironment.js';
+import { SVGLoader } from 'three/addons/loaders/SVGLoader.js';
+import { mergeGeometries } from 'three/addons/utils/BufferGeometryUtils.js';
+import { EffectComposer }   from 'three/addons/postprocessing/EffectComposer.js';
+import { RenderPass }       from 'three/addons/postprocessing/RenderPass.js';
+import { UnrealBloomPass }  from 'three/addons/postprocessing/UnrealBloomPass.js';
+import { OutputPass }       from 'three/addons/postprocessing/OutputPass.js';
+
+const Q = new URLSearchParams(location.search);
+const still = Q.get('still') === '1';
+let page = Math.max(+(Q.get('p') ?? 0) || 0, 0);   // 上限在 PAGES 定义后再钳，避免写死页数
+
+/* ============ 材质 × 配色：三档方案（design-director #2.2 规范/进阶/前卫）============
+   同一版型下切换，不改布局、不改版式骨架。 */
+const SCHEMES = {
+  // 紫色一律禁用（Jane 2026-08-10）。hello 保留原蓝，其余走暖色 / 青系。
+  base: { label:'规范', bloom:0.22,
+    word:{ colors:[0x6E9BE0], rough:0.10, metal:0.0, clearcoat:0.9, ccRough:0.05,
+           irid:0.18, iridIOR:1.40, env:1.9, trans:0.55, thick:0.55 },
+    env:['#EAF3FF','#93BCF0','#FFF3E4','#7FB0DE','#4E7FB8'] },
+  plus: { label:'进阶', bloom:0.42,
+    word:{ colors:[0x4E9FD6, 0xFFC46B], rough:0.075, metal:0.05, clearcoat:1.0, ccRough:0.02,
+           irid:0.35, iridIOR:1.50, env:2.2, trans:0.32, thick:0.72 },
+    env:['#EDF6FF','#8FC4EC','#FFEBD2','#F2B27A','#C97A46'] },
+  bold: { label:'前卫', bloom:0.78,
+    word:{ colors:[0x2FA9C9, 0xFFC24D, 0xFF7A4D], rough:0.05, metal:0.12, clearcoat:1.0, ccRough:0.01,
+           irid:0.55, iridIOR:1.65, env:2.8, trans:0.0, thick:0 },
+    env:['#FFF6EA','#FFC98F','#FFF0DC','#59C4D8','#2A7E96'] },
+};
+let scheme = SCHEMES[Q.get('s')] ? Q.get('s') : 'plus';
+
+/* ============ 好奇色板（量化所得，不手调） ============ */
+const C = { sky:0xBFDDF0, warm:0xFEF7EF, b1:0x8BADD6, b2:0x9FBAD8, b3:0xB2C1D3,
+            blue:0x3080D8, ink:0x000000 };
+
+/* ============ 等距屏幕基向量 ============ */
+const SR = new THREE.Vector3( 0.7328, 0.0000, -0.6805);
+const SU = new THREE.Vector3(-0.2192, 0.9467, -0.2360);
+const SD = new THREE.Vector3( 0.6442, 0.3221,  0.6937);
+const sp = (x,y,d=0) => [SR.x*x+SU.x*y+SD.x*d, SR.y*x+SU.y*y+SD.y*d, SR.z*x+SU.z*y+SD.z*d];
+const HIDE = [...sp(0,-6,0), 0.001];
+
+/* ============ 这一套专属的 3D 语汇 ============
+   不是通用部件库调参数，是照好奇的画面定制：
+   连绵手写笔迹（它的 hello）+ 3D 光标箭头（它的标志元素）+ 少量圆润几何 */
+// 这一套的 3D 语汇 = 一批「看得懂的符号」漂浮着（贴纸感的来源），
+// 不是抽象缠绕管。haoqi 的主视觉是文字、旁边是光标和爱心，都是有意义的形状。
+const EX = (sh, s, d=0.26) => new THREE.ExtrudeGeometry(sh,
+  { depth:d*s, bevelEnabled:true, bevelSize:0.075*s, bevelThickness:0.075*s, bevelSegments:6 });
+const done = g => { g.center(); return g; };
+
+function heartGeo(s){
+  const sh = new THREE.Shape();
+  sh.moveTo(0, -0.62*s);
+  sh.bezierCurveTo(-1.05*s, 0.18*s, -0.62*s, 1.05*s, 0, 0.50*s);
+  sh.bezierCurveTo( 0.62*s, 1.05*s,  1.05*s, 0.18*s, 0, -0.62*s);
+  return done(EX(sh, s, 0.34));
+}
+function starGeo(s, n=5){
+  const sh = new THREE.Shape();
+  for (let i=0;i<n*2;i++){
+    const r = i%2 ? s*0.46 : s, a = i/(n*2)*Math.PI*2 - Math.PI/2;
+    const x = Math.cos(a)*r, y = Math.sin(a)*r;
+    i ? sh.lineTo(x,y) : sh.moveTo(x,y);
+  }
+  sh.closePath(); return done(EX(sh, s, 0.30));
+}
+function plusGeo(s){
+  const w = s*0.33, sh = new THREE.Shape();
+  sh.moveTo(-w,-s); sh.lineTo(w,-s); sh.lineTo(w,-w); sh.lineTo(s,-w);
+  sh.lineTo(s,w);   sh.lineTo(w,w);  sh.lineTo(w,s);  sh.lineTo(-w,s);
+  sh.lineTo(-w,w);  sh.lineTo(-s,w); sh.lineTo(-s,-w);sh.lineTo(-w,-w);
+  sh.closePath(); return done(EX(sh, s, 0.34));
+}
+function cursorGeo(s){
+  // 好奇右下那个 3D 光标箭头
+  const sh = new THREE.Shape();
+  sh.moveTo(0,0); sh.lineTo(0,-1.32*s); sh.lineTo(0.36*s,-0.96*s);
+  sh.lineTo(0.62*s,-1.5*s); sh.lineTo(0.86*s,-1.36*s); sh.lineTo(0.60*s,-0.84*s);
+  sh.lineTo(1.02*s,-0.80*s); sh.closePath();
+  return done(EX(sh, s, 0.22));
+}
+
+/* ---- 充气果冻字：Baloo 2（OFL）粗圆体字形轮廓 → 大圆角挤出 ----
+   基础几何体（球/方块/星）怎么调都撑不住这套风格，haoqi 的 3D 全是文字，所以照做。
+   字母的洞（O/R/A）交给 SVGLoader 判定内外轮廓，不手写规则。 */
+const _svgLoader = new SVGLoader();
+let GLYPHS = null;
+function wordGeo(word, opt={}){
+  if (!GLYPHS) return new THREE.BufferGeometry();
+  const upem = GLYPHS.upem || 1000;
+  const { depth=0.17, bevel=0.040, tracking=0.015 } = opt;
+  const geos = [];
+  let pen = 0;                                  // 笔位，字体单位
+  for (const ch of word.toUpperCase()){
+    const g = GLYPHS.glyphs[ch];
+    if (!g){ pen += 0.40*upem; continue; }
+    const doc = _svgLoader.parse(
+      `<svg xmlns="http://www.w3.org/2000/svg"><path d="${g.d}"/></svg>`);
+    const shapes = [];
+    for (const path of doc.paths) shapes.push(...SVGLoader.createShapes(path));
+    if (shapes.length){
+      // 逐字母各自挤出再合并 —— 直接改 Shape 内部点是无效的
+      const geo = new THREE.ExtrudeGeometry(shapes, {
+        depth: depth*upem, bevelEnabled:true,
+        bevelThickness: bevel*upem, bevelSize: bevel*upem*0.60,
+        bevelSegments: 6, curveSegments: 10,
+      });
+      geo.translate(pen, 0, 0);
+      geos.push(geo);
+    }
+    pen += (g.a + tracking) * upem;
+  }
+  if (!geos.length) return new THREE.BufferGeometry();
+  const merged = mergeGeometries(geos, false) || geos[0];
+  // 字体 y 向上、three 也是 y 向上，直接对应 —— 任何 y 翻转都会把字倒过来
+  merged.scale(1/upem, 1/upem, 1/upem);
+  merged.computeBoundingBox();
+  const b = merged.boundingBox;
+  merged.translate(-(b.min.x+b.max.x)/2, -(b.min.y+b.max.y)/2, -(b.min.z+b.max.z)/2);
+  merged.computeVertexNormals();
+  // 顶点色渐变：单一颜色压不住画面，横向推移才跳得出来
+  const bb2 = merged.boundingBox, pos = merged.attributes.position;
+  const span = Math.max(1e-6, bb2.max.x - bb2.min.x);
+  const cs = SCHEMES[scheme].word.colors.map(h => new THREE.Color(h));
+  const col = new Float32Array(pos.count*3), tmp = new THREE.Color();
+  for (let i=0;i<pos.count;i++){
+    const t = THREE.MathUtils.clamp((pos.getX(i) - bb2.min.x)/span, 0, 1);
+    if (cs.length === 1) tmp.copy(cs[0]);
+    else {
+      const seg = 1/(cs.length-1), k = Math.min(cs.length-2, Math.floor(t/seg));
+      tmp.copy(cs[k]).lerp(cs[k+1], (t - k*seg)/seg);
+    }
+    col[i*3]=tmp.r; col[i*3+1]=tmp.g; col[i*3+2]=tmp.b;
+  }
+  merged.setAttribute('color', new THREE.BufferAttribute(col, 3));
+  return merged;
+}
+
+function helloGeo(scale, tube){
+  // 一笔连写的 hello：手写体的笔顺连成一条 3D 曲线，圆管扫出。
+  // 这是这套风格的主视觉（对应 haoqi 首屏那个 hello），不是抽象形状。
+  const raw = [
+    // h ── 竖，回上，拱
+    [0.00, 0.95, 0.00],[0.00, 0.42,-0.05],[0.01,-0.02, 0.04],[0.02,-0.46, 0.00],
+    [0.05,-0.10,-0.06],[0.10, 0.16, 0.05],[0.24, 0.38, 0.00],[0.40, 0.24,-0.05],
+    [0.45,-0.06, 0.04],[0.46,-0.46, 0.00],
+    // e ── 出锋接入，横穿再绕一圈
+    [0.60,-0.32, 0.06],[0.80,-0.10, 0.00],[0.88, 0.12,-0.06],[0.74, 0.31, 0.04],
+    [0.55, 0.20, 0.00],[0.52,-0.10,-0.05],[0.64,-0.38, 0.05],[0.86,-0.44, 0.00],
+    [1.00,-0.30,-0.04],
+    // l ── 上挑到顶再落
+    [1.10, 0.10, 0.05],[1.20, 0.58, 0.00],[1.24, 0.94,-0.05],[1.22, 0.42, 0.04],
+    [1.23,-0.46, 0.00],
+    // l ── 第二笔
+    [1.36,-0.24, 0.06],[1.48, 0.34, 0.00],[1.56, 0.94,-0.05],[1.55, 0.40, 0.04],
+    [1.56,-0.46, 0.00],
+    // o ── 收笔画圈
+    [1.70,-0.30, 0.06],[1.90,-0.45, 0.00],[2.10,-0.28,-0.05],[2.14, 0.04, 0.04],
+    [1.98, 0.30, 0.00],[1.79, 0.16,-0.05],[1.77,-0.14, 0.05],[1.92,-0.42, 0.00],
+    [2.16,-0.34,-0.04],
+  ];
+  const cx = 1.08, cy = 0.24;
+  const pts = raw.map(([x,y,d]) => new THREE.Vector3(
+    ...sp((x-cx)*scale, (y-cy)*scale, d*scale*1.6)));
+  return new THREE.TubeGeometry(
+    new THREE.CatmullRomCurve3(pts, false, 'centripetal'), 520, tube, 26, false);
+}
+
+function blobGeo(s){
+  // 圆润有机团块：球体做低频噪声位移，比正球有生气
+  const g = new THREE.SphereGeometry(s, 96, 64);
+  const pos = g.attributes.position;
+  const v = new THREE.Vector3();
+  for (let i=0;i<pos.count;i++){
+    v.fromBufferAttribute(pos, i);
+    const n = Math.sin(v.x*2.1)*Math.cos(v.y*1.7)*Math.sin(v.z*2.4);
+    v.multiplyScalar(1 + n*0.16);
+    pos.setXYZ(i, v.x, v.y, v.z);
+  }
+  g.computeVertexNormals(); return g;
+}
+function ringGeo(s){ return new THREE.TorusGeometry(s, s*0.30, 32, 96); }
+function pillGeo(s){ return new THREE.CapsuleGeometry(s*0.42, s*1.1, 14, 30); }
+function cubeGeo(s){
+  const sh = new THREE.Shape();
+  const r = s*0.30, w = s;
+  sh.moveTo(-w+r,-w); sh.lineTo(w-r,-w); sh.quadraticCurveTo(w,-w,w,-w+r);
+  sh.lineTo(w,w-r);   sh.quadraticCurveTo(w,w,w-r,w);
+  sh.lineTo(-w+r,w);  sh.quadraticCurveTo(-w,w,-w,w-r);
+  sh.lineTo(-w,-w+r); sh.quadraticCurveTo(-w,-w,-w+r,-w);
+  return done(EX(sh, s, 0.55));
+}
+
+// 封面用手写体 hello（「你好」只该在封面）；内页各用该页主题的充气词
+// 字母方向是错的（Jane 2026-08-10）：3D 不要字母。内页改用生成的黏土件。
+const PAGE_WORD = {};   // 字母方向已废弃，内页 3D 改用黏土件
+const PARTS = [
+  { k:'hello', geo:() => helloGeo(1.05, 0.105), col:'jelly' },
+  { k:'word',  geo:() => new THREE.BufferGeometry(), col:'jelly' },   // 内容随页重建
+];
+
+/* ============ 布局：每页把哪些元素摆在哪 ============ */
+// 顺序：heart cursor star plus blob ring pill cube
+// 顺序：heart cursor star plus hello ring pill cube blob
+// hello 是「你好」，只该出现在封面；内页主视觉换成 blob
+// 只剩 hello 一件：其余自绘几何全部撤除，宁缺毋滥。
+// 内页的替代元素等生成的高质量素材到位再补。
+// hello 只在封面出现（「你好」不该内页重复）；其余布局全部收起。
+// 12 种布局的 key 必须齐 —— 缺一个就会 undefined 报错整页空白。
+// hello 出现在两处：封面（主视觉）与 P10「立体语汇」（作为论据实物）。
+// 讲果冻字的那一页不放实物，整页就是空话。
+const HELLO_PAGES = { 0:[...sp( 2.95, 0.30, 0.30), 1.00],
+                      9:[...sp( 0.15, 0.90, 0.30), 1.42] };
+const L = {
+  cover:  [[...sp( 2.95, 0.30, 0.30), 1.00], HIDE],
+  toc:    [HIDE, HIDE], section:[HIDE, HIDE], swatch:[HIDE, HIDE], text:[HIDE, HIDE],
+  list:   [HIDE, HIDE], scale: [HIDE, HIDE], gallery:[HIDE, HIDE],
+  stat:   [HIDE, HIDE], compare:[HIDE, HIDE], steps:[HIDE, HIDE],
+  quote:  [HIDE, HIDE], end:   [HIDE, HIDE],
+};
+
+/* ============ 页面内容：逐页拆解这套视觉 ============ */
+const PAGES = [
+  { T:'A', L:'cover', sec:'COVER', tpl:()=>`
+      <div class="kick anim">HAOQI VISUAL LANGUAGE · 视觉风格拆解</div>
+      <div class="big anim">CRAFT<br>&amp; TASTE</div>
+      <div class="lead anim">把 haoqi.design 的一整套视觉语汇拆到二十页：色、字、立体、版式、动效。
+      这份 deck 本身就用这套语汇做成。</div>` },
+
+  { T:'D', L:'toc', sec:'CONTENTS', tpl:()=>`
+      <div class="kick anim">CONTENTS / 二十页视觉路线</div>
+      <div class="big anim zh" style="font-size:3.4vw;margin-top:3vh">先看骨架，再看味道</div>
+      <div class="lead anim">五章不是五套模板，而是色、字、立体、版式与动效共同组成的一套语言。</div>
+      <div class="toc anim">
+        ${[['01','色彩','COLOR'],['02','字体','TYPE'],['03','立体','3D'],['04','版式','GRID'],['05','动效','MOTION']]
+          .map(([n,z,e])=>`<div class="tc"><em>${n}</em><b>${z}</b><span>${e}</span></div>`).join('')}
+      </div>` },
+
+  { T:'D', L:'swatch', sec:'01 COLOR', tpl:()=>`
+      <div class="kick anim">CHAPTER 01 — COLOR SYSTEM / 配色总览</div>
+      <div class="chapter-lockup anim"><span class="chapter-no">01</span><div class="big zh chapter-name">色彩</div></div>
+      <div class="chapter-thesis anim">面积就是规矩</div>
+      <div class="lead anim" style="max-width:25vw;margin-top:.8vh">色块宽度按真实占比画：天空底吃掉六成，那束暖光只有 8%。
+      这张色板本身就是「暖色只做点缀」的证据。</div>
+      <div class="sw-row anim">
+        ${[['#BFDDF0','天空底','60%',6],['#9FBAD8','半透中','22%',2.2],
+           ['#FEF7EF','暖光晕','8%',0.9],['#3080D8','强调','6%',0.7],['#000000','标题黑','4%',0.5]]
+          .map(([h,r,pc,fr])=>`<div class="sw" style="flex:${fr}">
+            <div class="chip" style="background:${h}"></div>
+            <div class="hex">${h}</div><div class="role">${r} · ${pc}</div></div>`).join('')}
+      </div>` },
+
+  { T:'B', L:'text', sec:'01 COLOR', tpl:()=>`
+      <div class="kick anim">01 — WHY / 为什么单色相</div>
+      <div class="big anim zh" style="font-size:3.4vw">靠明度分层<br>不靠色相堆叠</div>
+      <div class="lead anim">整站只有一个蓝色相（H203–213），层次全部由饱和度与亮度拉开。
+      色相一多，画面立刻散；明度分层则怎么排都稳。</div>` },
+
+  { T:'A', L:'list', sec:'01 COLOR', tpl:()=>`
+      <div class="kick anim">01 — RULES / 用色规矩</div>
+      <div class="big anim zh" style="font-size:3.0vw">四条不许破</div>
+      <div class="items anim">
+        <div class="it"><div><em>01</em><b>暖色只做点缀</b></div><span>那束光晕是唯一暖色，占比不过 8%</span></div>
+        <div class="it"><div><em>02</em><b>纯黑只给标题</b></div><span>正文用 62% 透明度的黑，不用灰</span></div>
+        <div class="it"><div><em>03</em><b>强调色小面积</b></div><span>#3080D8 只出现在角标与光标</span></div>
+        <div class="it"><div><em>04</em><b>禁止紫</b></div><span>紫会把蓝底拖脏，整套不出现</span></div>
+      </div>` },
+
+  { T:'E', L:'section', sec:'02 TYPE', tpl:()=>`
+      <div class="idx anim">02</div>
+      <div class="big anim zh">字体</div>
+      <div class="lead anim">标题极粗压紧，标注全部交给等宽，中文与拉丁共用一套骨架。</div>` },
+
+  { T:'D', L:'scale', sec:'02 TYPE', tpl:()=>`
+      <div class="kick anim">02 — SCALE / 字号阶梯</div>
+      <div class="big anim zh" style="font-size:2.8vw">五档，不再多</div>
+      <div class="scale anim">
+        ${[['DISPLAY / 5.6vw','CRAFT &amp; TASTE','font-size:2.6vw;font-weight:800;letter-spacing:-.022em'],
+           ['TITLE / 3.4vw','半透果冻 + 连绵一笔','font-size:1.7vw;font-weight:700'],
+           ['LEAD / 1.0vw','正文行高 1.9，最大宽 26vw','font-size:1.0vw;opacity:.7'],
+           ['LABEL / .82vw','MONO · 字距 +.30em','font-family:var(--mono);font-size:.82vw;letter-spacing:.3em;opacity:.6'],
+           ['META / .70vw','页码 · 坐标 · 进度','font-family:var(--mono);font-size:.7vw;opacity:.45']]
+          .map(([k,v,st])=>`<div class="row"><i>${k}</i><span style="${st}">${v}</span></div>`).join('')}
+      </div>` },
+
+  { T:'B', L:'text', sec:'02 TYPE', tpl:()=>`
+      <div class="kick anim">02 — PAIRING / 中西搭配</div>
+      <div class="big anim zh" style="font-size:2.6vw">同一套骨架</div>
+      <div class="pair anim">
+        <div class="pc"><div class="sample">CRAFT</div>
+          <div class="meta">LATIN · WEIGHT 800<br>TRACKING −.022em<br>LINE-HEIGHT .98</div></div>
+        <div class="pc"><div class="sample zh">工艺</div>
+          <div class="meta">中文 · 字重 700<br>字距 −.02em<br>行高 1.06</div></div>
+      </div>
+      <div class="lead anim" style="max-width:34vw">同字号、同基线并排才比得出来：拉丁要压紧，中文要放开，
+      两者的视觉重量才对齐。</div>` },
+
+  { T:'E', L:'section', sec:'03 3D', tpl:()=>`
+      <div class="idx anim">03</div>
+      <div class="big anim zh">立体</div>
+      <div class="lead anim">主视觉是一笔写完的果冻字，配角是黏土件，两者共用一套光。</div>` },
+
+  { T:'C', L:'text', sec:'03 3D', tpl:()=>`
+      <div class="kick anim">03 — LANGUAGE / 立体语汇</div>
+      <div class="big anim zh" style="font-size:2.4vw">半透果冻 + 连绵一笔</div>
+      <div class="lead anim" style="max-width:40vw">上方就是实物：一笔写完的闭合笔迹，光穿过去带出内部结构，
+      边缘留一道暖白高光。几何符号一律不用——撑不住这套风格。</div>` },
+
+  { T:'D', L:'gallery', sec:'03 3D', tpl:()=>`
+      <div class="kick anim">03 — LIBRARY / 素材池</div>
+      <div class="big anim zh" style="font-size:2.8vw">同一套语汇，四十件</div>
+      <div class="galg anim">
+        ${[['人物', ['dj','shooter','skater','reader','girl_dance','girl_photo'], 1.00],
+           ['生活', ['coffee','donut','balloon','laptop','headphone','pop_boba','pop_sneaker'], 1.00],
+           ['游戏', ['dop_button','dop_trophy','dop_phone','pop_pad','pop_boombox','pop_cam'], 1.00],
+           ['自然', ['cactus','moon','rainbow','cloud','wave','planet','pop_forest','pop_plant'], 1.06],
+           ['符号', ['check','spiral','ring','bolt','flower','plane','cube','stack','drop'], 1.12]]
+          .map(([g,ks,sc])=>`<div class="grow">
+            <div class="glab">${g} · ${ks.length}</div>
+            <div class="gitems">${ks.map(k=>
+              `<img src="./assets/clay/${k}.png" alt="" style="transform:scale(${sc})">`).join('')}</div>
+          </div>`).join('')}
+      </div>` },
+
+  { T:'B', L:'stat', sec:'03 3D', tpl:()=>`
+      <div class="kick anim">03 — SPEC / 材质规格</div>
+      <div class="big anim zh" style="font-size:2.8vw">三个数决定质感</div>
+      <div class="stats anim">
+        <div class="st-i"><b>0.86</b><em>TRANSMISSION</em><span>透射：拉满会冲成灰白，八成刚好</span></div>
+        <div class="st-i"><b>1.0</b><em>CLEARCOAT</em><span>清漆：锐高光的来源，粗糙度压到 0.02</span></div>
+        <div class="st-i"><b>2.2</b><em>ENV INTENSITY</em><span>环境反射：颜色变化几乎全靠它</span></div>
+      </div>` },
+
+  { T:'E', L:'section', sec:'04 GRID', tpl:()=>`
+      <div class="idx anim">04</div>
+      <div class="big anim zh">版式</div>
+      <div class="lead anim">骨架不藏起来，它本身就是画面的一部分。</div>` },
+
+  { T:'A', L:'list', sec:'04 GRID', tpl:()=>`
+      <div class="kick anim">04 — SKELETON / 骨架构件</div>
+      <div class="big anim zh" style="font-size:3.0vw">骨架是露出来的</div>
+      <div class="items anim">
+        <div class="it"><div><em>01</em><b>边界线</b></div><span>四边 1px，透明度 9%，只框不切</span></div>
+        <div class="it"><div><em>02</em><b>十字标记</b></div><span>四角交点，11px，透明度 42%</span></div>
+        <div class="it"><div><em>03</em><b>坐标读数</b></div><span>MONO 小字，右下角实时视口尺寸</span></div>
+        <div class="it"><div><em>04</em><b>进度</b></div><span>2px 细条，左下角，随页推进</span></div>
+      </div>` },
+
+  { T:'D', L:'compare', sec:'04 GRID', tpl:()=>`
+      <div class="kick anim">04 — SPACING / 留白规矩</div>
+      <div class="big anim zh" style="font-size:3.0vw">左边永远留给字</div>
+      <div class="cmp anim">
+        <div class="cm"><b>✓ 该这样</b><span>左 52% 恒为文字区，立体件一律压在右侧；
+          有色板或条目的页面，元素再往上收。</span></div>
+        <div class="cm no"><b>✗ 别这样</b><span>一套坐标套所有页——色板会被压住、
+          条目会被贴纸骑上去，20 页里必翻车。</span></div>
+      </div>` },
+
+  { T:'E', L:'section', sec:'05 MOTION', tpl:()=>`
+      <div class="idx anim">05</div>
+      <div class="big anim zh">动效</div>
+      <div class="lead anim">慢、软、不抢戏。动效是让画面呼吸，不是表演。</div>` },
+
+  { T:'B', L:'steps', sec:'05 MOTION', tpl:()=>`
+      <div class="kick anim">05 — SEQUENCE / 一次翻页发生什么</div>
+      <div class="big anim zh" style="font-size:2.8vw">四步，全部错相</div>
+      <div class="steps anim">
+        <div class="sp"><em>STEP 01</em><b>文字退场</b><span>整层去掉 go，透明度归零</span></div>
+        <div class="sp"><em>STEP 02</em><b>元素流动</b><span>不消失重来，直接移到新站位</span></div>
+        <div class="sp"><em>STEP 03</em><b>逐行浮起</b><span>16px，错相 70ms</span></div>
+        <div class="sp"><em>STEP 04</em><b>常驻呼吸</b><span>正弦浮动，周期 7–11s</span></div>
+      </div>` },
+
+  { T:'E', L:'quote', sec:'05 PRINCIPLE', tpl:()=>`
+      <div class="kick anim">PRINCIPLE</div>
+      <div class="big anim">「工艺正确只是及格，<br>美感层才是分数」</div>
+      <div class="lead anim">—— 继承自小耳剪纸风的第五条设计哲学</div>` },
+
+  { T:'C', L:'text', sec:'06 APPLY', tpl:()=>`
+      <div class="kick anim">06 — IN USE / 综合应用</div>
+      <div class="big anim">HAVE A<br>NICE DECK</div>
+      <div class="lead anim">五个要素同时在场：天空底、暖光斜条、半透笔迹、黏土件、露骨架的网格。
+      这就是完整的一页。</div>` },
+
+  { T:'A', L:'end', sec:'END', tpl:()=>`
+      <div class="kick anim">END</div>
+      <div class="big anim">THAT'S<br>THE STYLE</div>
+      <div class="lead anim">✂ 小耳 3D 风 · 好奇套系 · 20 页</div>` },
+];
+
+/* ============ 黏土件 + 贴纸：素材池 + 随机抽取 ============
+   40 件分两类：hero 有分量当主角，prop 小件当配角。
+   位置槽按「每种布局的内容区」写死禁区，槽位固定、素材随机 ——
+   20 页也不会撞车，构图又不会因为随机而乱。 */
+const CLAY_HERO = ['dj','coolcat','shooter','skater','reader','coffee','donut','balloon','spiral','cube','plane',
+                   'rainbow','laptop','headphone','girl_dance','girl_photo','girl_plant','girl_skate','girl_street',
+                   'pop_boba','pop_boombox','pop_cam','pop_forest','pop_hp','pop_pad','pop_plant','pop_skate','pop_sneaker','pop_vinyl2'];
+const CLAY_PROP = ['drop','check','cloud','stack','flower','bird','wave','ring','bolt','moon','planet','cactus',
+                   'dop_button','dop_cam','dop_heart','dop_latte','dop_phone','dop_trophy','sneaker'];
+// [left%, top%, 宽vw, 旋转deg]；第一槽是主角。左 52% 恒为文字区，一律不进
+const CLAY_SLOTS = {
+  cover:  [[56,52,15,-5], [90,72, 5,-8]],
+  section:[[64,16,24, 6], [88,62, 8,-7], [56,74, 6, 9]],
+  swatch: [[66,10,19, 7], [88,16, 7,-6], [56,26, 5, 6]],
+  text:   [[64,12,21,-4], [89,60, 7, 6], [57,70, 5,-7]],
+  list:   [[66,14,20,-4], [89,48, 7, 7], [58,30, 5,-8]],
+  scale:  [[70,12,17, 5], [90,44, 6,-6]],
+  gallery:[[72,10,15,-5], [91,40, 6, 7]],
+  stat:   [[66,12,20, 6], [89,50, 7,-7], [58,28, 5, 8]],
+  compare:[[68,12,18,-5], [90,46, 6, 7]],
+  steps:  [[68,12,18, 8], [90,44, 6,-6]],
+  quote:  [[15,20,11,-8], [85,22,10, 7], [50,80, 6, 5]],
+  end:    [[64,12,20, 5], [89,56, 8,-8], [57,70, 5, 7]],
+};
+// 每页固定分配，全局一件只用一次 —— 随机会重复，Jane 明确不要重复。
+// [素材, left%, top%, 宽vw, 旋转deg]
+const CLAY_BY_PAGE = {
+  // 10 个 pop_* 新素材全部接入；hero / support / accent 三级体量，全局不重复。
+   0:[['balloon',57,55,14,-5]],
+   1:[['pop_pad',74,19,16,6],['dop_button',90,67,6,-8]],
+   2:[['pop_forest',75,9,17,5],['bolt',92,31,4,-6]],
+   3:[['pop_plant',7,16,18,-5],['cactus',23,65,5,8]],
+   4:[['girl_dance',76,9,17,5],['check',91,47,4,-7]],
+   5:[['pop_vinyl2',8,16,20,-6],['cloud',25,65,6,6]],
+   6:[['pop_boombox',78,13,16,4],['drop',93,53,4,-8]],
+   7:[['pop_cam',7,20,16,-5],['flower',91,22,5,7]],
+   8:[['pop_hp',8,60,17,8],['moon',89,65,5,-6]],
+   9:[['dop_latte',88,16,10,-4]],
+  10:[['pop_boba',86,8,12,6]],
+  11:[['pop_sneaker',77,13,16,5],['planet',92,44,4,-7]],
+  12:[['girl_photo',82,19,16,-5],['ring',92,66,5,8]],
+  13:[['girl_plant',8,18,16,-6],['sneaker',24,64,5,7]],
+  14:[['girl_skate',7,22,15,6],['stack',90,24,4,-8]],
+  15:[['pop_skate',8,15,17,-4],['wave',23,63,4,8]],
+  16:[['girl_street',79,15,16,6],['bird',93,48,4,-7]],
+  17:[['headphone',8,25,10,-8],['dop_heart',88,25,8,7]],
+  18:[['laptop',72,12,18,-6],['dop_trophy',92,57,6,7]],
+  19:[['plane',8,23,13,5],['dop_phone',86,58,9,-7]],
+};
+function pickClay(key, idx){ return CLAY_BY_PAGE[idx] || []; }
+
+// 复古贴纸：每种布局固定摆位，避开内容区
+// 每页至多一颗贴纸，且必须卡在实物边缘（色板角、网格交点、标题首字旁），
+// 悬在空白正中一律不允许 —— 原来六页共用同一坐标，看起来像水印 bug。
+// 全 deck 只留 6 颗贴纸，按页码写死，素材不重复，且必须咬住实物边缘。
+// 原来按布局类型定义 → 同一布局的多页共用同一坐标，出现「四页同一像素」的水印感。
+// 禁止任何贴纸落在 y 90–115（那条横带原来挂了 10 页）。
+const SL_BY_PAGE = {
+  2:  [['offer',   62.0, 30, 4.0,-7]],   // 色板已铺底，贴纸移到中右空区
+  6:  [['youwin',  40.0, 70, 4.2, 6]],   // 骑在字阶表末行右侧
+  10: [['awesome', 78.0, 30, 4.4,-8]],   // 压素材网格右上角
+  13: [['race',    41.0, 63, 4.0, 9]],   // 别在骨架图右缘
+  16: [['play',    43.0, 66, 4.4,-6]],   // 卡在四步流程末端
+  18: [['cool',    45.0, 30, 4.2, 7]],   // 咬住综合应用页的标题右上
+};
+const stkBox = document.getElementById('stk');
+function renderStickers(key, idx){
+  stkBox.classList.remove('go2');
+  const clay = pickClay(key, idx).map(([k,l,t,w,r],i)=>{
+    const ix = l < 50 ? '-18vw' : '18vw';
+    const iy = i === 0 ? '-10vh' : '14vh';
+    return `<div class="st clay" style="left:${l}%; top:${t}%; width:${w}vw;
+      --r:${r}deg; --ix:${ix}; --iy:${iy}; transition-delay:${(i*.10).toFixed(2)}s">
+      <img src="./assets/clay/${k}.png" alt=""></div>`;
+  }).join('');
+  stkBox.innerHTML = clay + (SL_BY_PAGE[idx]||[]).map(([k,l,t,w,r],i)=>{
+    const ix = l < 50 ? '-12vw' : '12vw';
+    return `<div class="st" style="left:${l}%; top:${t}%; width:${w}vw;
+      --r:${r}deg; --ix:${ix}; --iy:16vh; transition-delay:${(.18+i*.08).toFixed(2)}s">
+      <img src="./assets/stickers/retro/${k}.png" alt=""></div>`;
+  }).join('');
+  requestAnimationFrame(()=>requestAnimationFrame(()=>stkBox.classList.add('go2')));
+}
+
+/* ============ 场景 ============ */
+const canvas = document.getElementById('cv');
+const renderer = new THREE.WebGLRenderer({ canvas, antialias:true });
+renderer.setPixelRatio(Math.min(devicePixelRatio, 2));
+renderer.shadowMap.enabled = true;
+renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+renderer.toneMapping = THREE.LinearToneMapping;
+renderer.toneMappingExposure = 1.0;
+
+const scene = new THREE.Scene();
+const pmrem = new THREE.PMREMGenerator(renderer);
+// 自制带色环境：上蓝下紫、中间一条暖白亮带。
+// 果冻材质的颜色变化几乎全来自环境反射 —— 用白房间只能反白光，那是画面发闷的根因
+const envCv = document.createElement('canvas'); envCv.width = 1024; envCv.height = 512;
+function bgCacheEnv(){
+  const g = envCv.getContext('2d');
+  const grad = g.createLinearGradient(0,0,0,512);
+  const E = SCHEMES[scheme].env;
+  grad.addColorStop(0.00, E[0]);   // 天顶
+  grad.addColorStop(0.34, E[1]);
+  grad.addColorStop(0.52, E[2]);   // 暖白亮带 → 高光与边缘折射的来源
+  grad.addColorStop(0.72, E[3]);
+  grad.addColorStop(1.00, E[4]);
+  g.fillStyle = grad; g.fillRect(0,0,1024,512);
+  // 几团高亮，制造强高光斑
+  [[210,150,150,'rgba(255,255,255,.95)'],[760,120,120,'rgba(255,240,220,.85)'],
+   [520,330,180,'rgba(180,200,255,.55)']].forEach(([x,y,r,c])=>{
+    const rg = g.createRadialGradient(x,y,0,x,y,r);
+    rg.addColorStop(0,c); rg.addColorStop(1,'rgba(255,255,255,0)');
+    g.fillStyle = rg; g.fillRect(0,0,1024,512);
+  });
+  const t = new THREE.CanvasTexture(envCv);
+  t.mapping = THREE.EquirectangularReflectionMapping;
+  t.colorSpace = THREE.SRGBColorSpace;
+  if (scene.environment) scene.environment.dispose?.();
+  scene.environment = pmrem.fromEquirectangular(t).texture;
+  t.dispose();
+}
+bgCacheEnv();
+
+// 背景：天空蓝 + 斜向暖白光条（好奇那束极光的做法，不是径向光斑）
+(function makeBg(){
+  const cv = document.createElement('canvas'); cv.width=1024; cv.height=640;
+  const g = cv.getContext('2d');
+  g.fillStyle = '#BFDDF0'; g.fillRect(0,0,1024,640);
+  g.save(); g.translate(512,320); g.rotate(-0.42); g.translate(-512,-320);
+  [[-40,300,0.62],[180,190,0.42],[380,120,0.30],[-260,150,0.34]].forEach(([y,hgt,a])=>{
+    const gr = g.createLinearGradient(0,y,0,y+hgt);
+    gr.addColorStop(0,'#FEF7EF00'); gr.addColorStop(.5,`rgba(254,247,239,${a})`); gr.addColorStop(1,'#FEF7EF00');
+    g.fillStyle = gr; g.fillRect(-300,y,1700,hgt);
+  });
+  g.restore();
+  const t = new THREE.CanvasTexture(cv); t.colorSpace = THREE.SRGBColorSpace;
+  scene.background = t;
+})();
+
+const TARGET = new THREE.Vector3(0,0,0);
+const camera = new THREE.OrthographicCamera(-4,4,2.6,-2.6,0.1,120);
+camera.position.set(5.2, 2.6, 5.6); camera.lookAt(TARGET);
+
+const key = new THREE.DirectionalLight(0xFFF6EA, 1.35);   // 主光带暖调，对上那束暖光
+key.position.set(-3.2, 6.0, 5.4);
+key.castShadow = true;
+key.shadow.mapSize.set(2048,2048);
+key.shadow.camera.left=-9; key.shadow.camera.right=9;
+key.shadow.camera.top=9;  key.shadow.camera.bottom=-9;
+key.shadow.radius = 9; key.shadow.bias = -0.0012;
+scene.add(key);
+const fill = new THREE.DirectionalLight(0xDCEBFA, 0.62);  // 补光偏冷，拉开冷暖
+fill.position.set(5, 1.2, -3);
+scene.add(fill);
+scene.add(new THREE.AmbientLight(0xffffff, 0.46));
+
+// 泛光：亮部溢出，bling 感的来源。强度随方案切换
+const composer = new EffectComposer(renderer);
+composer.addPass(new RenderPass(scene, camera));
+const bloom = new UnrealBloomPass(new THREE.Vector2(innerWidth, innerHeight),
+                                  SCHEMES[scheme].bloom, 0.62, 0.86);
+composer.addPass(bloom);
+composer.addPass(new OutputPass());
+
+const floor = new THREE.Mesh(new THREE.PlaneGeometry(90,90),
+  new THREE.ShadowMaterial({ opacity:0.085 }));
+floor.rotation.x = -Math.PI/2; floor.position.y = -3.4; floor.receiveShadow = true;
+scene.add(floor);
+
+// 材质：半透果冻（主）与实心强调蓝（点缀）
+function wordMat(){
+  const W = SCHEMES[scheme].word;
+  const m = new THREE.MeshPhysicalMaterial({
+    vertexColors:true, roughness:W.rough, metalness:W.metal,
+    clearcoat:W.clearcoat, clearcoatRoughness:W.ccRough,
+    iridescence:W.irid, iridescenceIOR:W.iridIOR, iridescenceThicknessRange:[120,520],
+    envMapIntensity:W.env, specularIntensity:1.0,
+    specularColor:new THREE.Color(0xFFF3E4),
+  });
+  if (W.trans > 0){ m.transmission = W.trans; m.thickness = W.thick; m.transparent = true; m.ior = 1.45; }
+  return m;
+}
+function jellyMat(hex){
+  return new THREE.MeshPhysicalMaterial({
+    // hello 必须在浅蓝天空上仍然像一根发亮的果冻霓虹管，而不是透明到消失
+    color:new THREE.Color(hex).lerp(new THREE.Color(0x9BC7FF), .34),
+    roughness:0.018, metalness:0.0,
+    transmission:0.68, thickness:1.05, ior:1.48,
+    attenuationColor:new THREE.Color(0x4E86E8), attenuationDistance:1.25,
+    clearcoat:1.0, clearcoatRoughness:0.008, transparent:true,
+    envMapIntensity:3.15, iridescence:0.42, iridescenceIOR:1.48,
+    emissive:new THREE.Color(0x245FD0), emissiveIntensity:0.34,
+    specularIntensity:1.0, specularColor:new THREE.Color(0xFFF7EA),
+  });
+}
+function solidMat(hex){
+  return new THREE.MeshPhysicalMaterial({
+    color:hex, roughness:0.30, metalness:0.0,
+    clearcoat:0.55, clearcoatRoughness:0.22, envMapIntensity:0.95,
+  });
+}
+// 蓝→紫渐变序列，逐件取不同色，画面才有色彩推移
+// hello 保留好奇原蓝，序列里的紫全部换成蓝的深浅档（紫色禁用）
+const JELLY = [0x6E96E0, 0x7BA3E8, 0x8AB4EA, 0x6FA8DC, 0x5C93D6, 0x87B6E4];
+const group = new THREE.Group(); scene.add(group);
+const meshes = PARTS.map((p, i) => {
+  const mat = p.k === 'word' ? wordMat()
+            : p.col === 'jelly' ? jellyMat(JELLY[i % JELLY.length]) : solidMat(C.blue);
+  const m = new THREE.Mesh(p.geo(), mat);
+  m.castShadow = m.receiveShadow = true;
+  const p0 = L[PAGES[page].L][i];
+  m.position.set(p0[0], p0[1], p0[2]);
+  m.userData = { phase:i*0.9, cur:[p0[0],p0[1],p0[2]], curS:p0[3] ?? 1, kind:p.k };
+  m.scale.setScalar(p0[3] ?? 1);
+  if (p.k === 'word')
+    m.quaternion.setFromRotationMatrix(new THREE.Matrix4().makeBasis(
+      SR.clone().normalize(), SU.clone().normalize(), SD.clone().normalize()));
+  group.add(m); return m;
+});
+
+/* ============ 文字层 ============ */
+const txt = document.getElementById('txt');
+function rebuildWord(key){
+  const m = meshes[1]; if (!m) return;
+  const w = PAGE_WORD[key];
+  m.geometry.dispose();
+  m.geometry = w ? wordGeo(w, { depth:0.17, bevel:0.040 }) : new THREE.BufferGeometry();
+  // 词长不同，按目标宽度归一，免得 MOTION 撑爆而 3D 太小
+  if (w){
+    m.geometry.computeBoundingBox();
+    const bw = Math.max(1e-3, m.geometry.boundingBox.max.x - m.geometry.boundingBox.min.x);
+    // 等距可视半宽约 4.6，词心 x=2.6 时右缘不能超 4.4 → 目标宽度 3.4 以内
+    m.userData.wordScale = Math.min(1.75, 3.2 / bw);
+  }
+}
+
+function renderPage(i){
+  const p = PAGES[i];
+  // 封面需要更亮的果冻招牌；P10 保持克制，避免整套每页都在发光。
+  bloom.strength = i === 0 ? Math.max(SCHEMES[scheme].bloom, 0.68) : SCHEMES[scheme].bloom;
+  txt.className = 'L-' + p.L;
+  document.body.className = document.body.className
+    .replace(/\bP\d+\b/g,'').replace(/\bT-[A-E]\b/g,'').trim() + ' P' + (i+1);      // 布局类：决定这一页用哪套版式。丢了这行 20 页会长得一模一样
+  txt.innerHTML = p.tpl();
+  document.body.classList.toggle('sect', p.L === 'section');
+  document.getElementById('t-sec').textContent = p.sec;
+  document.getElementById('b-num').textContent = String(i+1).padStart(2,'0');
+  document.getElementById('b-tot').textContent = '/ ' + String(PAGES.length).padStart(2,'0');
+  document.querySelector('#prog i').style.width = ((i+1)/PAGES.length*100).toFixed(1)+'%';
+  renderStickers(p.L, i);
+  rebuildWord(p.L);
+  requestAnimationFrame(()=>requestAnimationFrame(()=>txt.classList.add('go')));
+}
+const schemeBox = document.getElementById('b-scheme');
+function applyScheme(k){
+  scheme = k;
+  bloom.strength = SCHEMES[k].bloom;
+  bgCacheEnv();                                  // 环境贴图随方案重建
+  const m = meshes[1];
+  if (m){ m.material.dispose(); m.material = wordMat(); }
+  rebuildWord(PAGES[page].L);                    // 顶点色随方案重算
+  [...schemeBox.children].forEach(c=>c.classList.toggle('on', c.dataset.k===k));
+}
+Object.entries(SCHEMES).forEach(([k,v])=>{
+  const b=document.createElement('b'); b.textContent=v.label; b.dataset.k=k;
+  if (k===scheme) b.className='on';
+  b.onclick=()=>applyScheme(k);
+  schemeBox.appendChild(b);
+});
+
+function setCoord(){
+  document.getElementById('b-coord').textContent =
+    String(innerWidth).padStart(4,'0') + ' X ' + String(innerHeight).padStart(4,'0') + ' Y';
+}
+
+/* ============ 翻页 ============ */
+let anim = still ? 1 : 0;
+function goto(i){
+  i = Math.max(0, Math.min(PAGES.length-1, i));
+  if (i === page) return;
+  page = i;
+  meshes.forEach(m => { m.userData.from = [...m.userData.cur]; m.userData.fromS = m.userData.curS; });
+  anim = 0; txt.classList.remove('go'); renderPage(page);
+}
+addEventListener('keydown', e => {
+  if (['ArrowRight',' ','PageDown'].includes(e.key)) goto(page+1);
+  if (['ArrowLeft','PageUp'].includes(e.key)) goto(page-1);
+});
+let wl = 0;
+addEventListener('wheel', e => {
+  const n = performance.now();
+  if (n - wl < 640 || Math.abs(e.deltaY) < 12) return;
+  wl = n; goto(page + (e.deltaY > 0 ? 1 : -1));
+}, { passive:true });
+addEventListener('click', () => goto(page+1));
+
+const mouse = {x:0,y:0};
+addEventListener('pointermove', e => {
+  mouse.x = (e.clientX/innerWidth - .5)*2; mouse.y = (e.clientY/innerHeight - .5)*2;
+});
+
+function onResize(){
+  renderer.setSize(innerWidth, innerHeight, false);
+  composer.setSize(innerWidth, innerHeight);
+  bloom.resolution.set(innerWidth, innerHeight);
+  const asp = innerWidth/innerHeight, H = 2.62;
+  camera.left=-H*asp; camera.right=H*asp; camera.top=H; camera.bottom=-H;
+  camera.updateProjectionMatrix(); setCoord();
+}
+addEventListener('resize', onResize); onResize();
+
+const ease = t => t<0.5 ? 4*t*t*t : 1-Math.pow(-2*t+2,3)/2;
+const SDn = SD.clone().normalize();
+// 只把 +Z 转向镜头会让字沿等距方向斜着；用三个屏幕基向量搭正交基，字才是正立且正对镜头
+const qFace = new THREE.Quaternion().setFromRotationMatrix(
+  new THREE.Matrix4().makeBasis(SR.clone().normalize(), SU.clone().normalize(), SDn));
+const qSpin = new THREE.Quaternion();
+let last = performance.now();
+
+function tick(now){
+  const dt = Math.min((now-last)/1000, .05); last = now;
+  const t = now/1000;
+  if (!still) anim = Math.min(anim + dt/1.05, 1);
+  const layout = [HELLO_PAGES[page] || HIDE, HIDE];   // 按页码决定 hello，不按布局类型
+
+  meshes.forEach((m,i) => {
+    const u = m.userData, to = layout[i], from = u.from || to;
+    const e = ease(THREE.MathUtils.clamp((anim - i*0.05)/0.74, 0, 1));
+    u.cur = [from[0]+(to[0]-from[0])*e, from[1]+(to[1]-from[1])*e, from[2]+(to[2]-from[2])*e];
+    const fs = u.fromS ?? (to[3] ?? 1), ts = to[3] ?? 1;
+    u.curS = fs + (ts-fs)*e;
+    m.scale.setScalar(u.curS * (u.kind==='word' ? (u.wordScale||1) : 1));
+    // 动效克制：幅度压到很小，只让画面呼吸
+    const br = still ? 0 : Math.sin(t*0.62 + u.phase)*0.075;
+    const bz = still ? 0 : Math.cos(t*0.47 + u.phase*1.3)*0.05;
+    m.position.set(u.cur[0] + mouse.x*0.10*(0.5+u.phase*0.06), u.cur[1]+br, u.cur[2]+bz);
+    if (u.kind === 'word'){
+      qSpin.setFromAxisAngle(SDn, (still?0:t*0.055) + u.phase*0.35);
+      m.quaternion.copy(qSpin).multiply(qFace);
+    } else if (u.kind === 'ring'){ m.rotation.y = (still?0:t*0.2) + u.phase; }
+  });
+
+  const k = Math.min(dt*2.4, 1);
+  camera.position.x += (5.2 + mouse.x*0.34 - camera.position.x)*k;
+  camera.position.y += (2.6 - mouse.y*0.22 - camera.position.y)*k;
+  camera.lookAt(TARGET);
+  composer.render();
+  requestAnimationFrame(tick);
+}
+
+page = Math.min(page, PAGES.length - 1);
+if (still) document.body.classList.add('still');
+fetch('./assets/fonts/baloo-svg.json').then(r=>r.json()).then(j=>{
+  GLYPHS = j; rebuildWord(PAGES[page].L);
+}).catch(e=>console.error('字形加载失败', e));
+renderPage(page);
+requestAnimationFrame(tick);
+</script>
+</body>
+</html>

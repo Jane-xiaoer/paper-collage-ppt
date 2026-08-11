@@ -1,11 +1,26 @@
 ---
 name: paper-collage-ppt
-description: 「小耳剪纸风(Xiaoer Paper Collage)」——小耳出品:生成剪纸拼贴风格的横向翻页网页 PPT(单 HTML 文件),14 套艺术史经典配色 + deck 内置一键换肤面板 + 强调色滑杆 + 20 种布局,文字全部真 HTML 永不乱码,可导出可编辑 PPTX。当用户说"小耳剪纸风""剪纸 PPT""剪纸风演示""拼贴风 PPT""纸艺幻灯片""paper collage deck"时使用。
+description: 「小耳 PPT 风格馆」——生成多风格横向翻页网页 PPT。当前提供：小耳剪纸风（14 套艺术史配色、20 种布局、可编辑 PPTX）与好奇果冻 3D（半透果冻字、多巴胺黏土物件、技术网格、20 页示例），后续可继续扩展其他 3D 风格。用户说“小耳剪纸风”“剪纸 PPT”“好奇 3D”“果冻 3D PPT”“3D 演示”“选择 PPT 风格”“paper collage deck”时使用。
 ---
 
-# 小耳剪纸风 · Xiaoer Paper Collage PPT
+# 小耳 PPT 风格馆 · Xiaoer Deck Styles
 
-把一份大纲或文章变成「剪纸拼贴」风格的单文件网页 PPT:所有内容像剪好的纸片一张张贴在纸面上,翻页时逐格「贴」上来(定格动画手感),需要画面的页面配 nano 生成的手工纸艺插画。
+把一份大纲或文章变成拥有完整视觉语言的网页 PPT。当前支持小耳剪纸风与好奇果冻 3D；两种风格各自拥有独立模板、素材、动效和设计约束，不能只换颜色假装成另一种风格。
+
+## Step 0 · 选择风格
+
+用户已明确风格就直接进入对应工作流；没有明确时给两个选择：
+
+1. **小耳剪纸风** — 温暖、手作、叙事感，入口 `assets/template.html`，继续按下文 Step 1–7。
+2. **好奇果冻 3D** — 年轻、明亮、设计感，入口 `styles/haoqi-3d/demo.html`，先读 `styles/haoqi-3d/README.md`，基于现有 20 页结构改内容与素材分配。
+
+用户想先看效果时，打开 `style-gallery.html`。新增第三种风格时遵守 `styles/README.md`。
+
+---
+
+# 工作流 A：小耳剪纸风
+
+把一份大纲或文章变成「剪纸拼贴」风格的单文件网页 PPT：所有内容像剪好的纸片一张张贴在纸面上，翻页时逐格「贴」上来（定格动画手感），需要画面的页面配 nano 生成的手工纸艺插画。
 
 **血统**:视觉体系来自 `paper-collage-ad`(剪纸广告视频 skill)的实战配方——「实拍纸艺 diorama」美学、克制调色板、暖光投影;工程骨架借鉴 `guizang-ppt-skill` 的单文件 HTML 路线。两条硬教训直接继承:①AI 渲染文字必乱码,精确内容一律真 HTML;②工艺正确 ≠ 好看,美感层(光/色/主次/留白)绝不能省。
 
@@ -70,11 +85,15 @@ python3 <SKILL_DIR>/scripts/export-pptx-editable.py deck.html --theme t15 -o 分
 
 ## 资源导览
 
-```
+```text
 paper-collage-ppt/
+├── style-gallery.html            ← 多风格选择入口
 ├── SKILL.md                      ← 你在读
+├── styles/
+│   ├── README.md                 ← 新增风格规范
+│   └── haoqi-3d/                 ← 好奇果冻 3D 模板、素材与运行时
 ├── assets/
-│   └── template.html             ← 完整可运行模板 v2(7 示例页 = 工艺全展示)
+│   └── template.html             ← 剪纸风完整可运行模板
 ├── scripts/
 │   ├── export-pptx.py            ← HTML deck → 16:9 PPTX(逐页截图,可 --theme 指定配色)
 └── references/
