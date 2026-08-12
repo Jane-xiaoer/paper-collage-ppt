@@ -1,6 +1,6 @@
 ---
 name: paper-collage-ppt
-description: 「小耳 PPT 风格馆」——生成多风格横向翻页网页 PPT。当前提供：小耳剪纸风（14 套艺术史配色、20 种布局、可编辑 PPTX）与好奇果冻 3D（半透果冻字、多巴胺黏土物件、技术网格、20 页示例），后续可继续扩展其他 3D 风格。用户说“小耳剪纸风”“剪纸 PPT”“好奇 3D”“果冻 3D PPT”“3D 演示”“选择 PPT 风格”“paper collage deck”时使用。
+description: 「小耳 PPT 风格馆」——生成多风格横向翻页网页 PPT与微信公众号文章。当前提供：小耳剪纸风（14 套艺术史配色、20 种布局、可编辑 PPTX）与好奇果冻 3D（半透果冻字、多巴胺黏土物件、技术网格、20 页示例），并提供好奇 3D 卡通公众号排版工作流。用户说“小耳剪纸风”“剪纸 PPT”“好奇 3D”“果冻 3D PPT”“3D 演示”“3D 卡通公众号”“黏土风公众号”“公众号版面”“选择 PPT 风格”“paper collage deck”时使用。
 ---
 
 # 小耳 PPT 风格馆 · Xiaoer Deck Styles
@@ -14,7 +14,7 @@ description: 「小耳 PPT 风格馆」——生成多风格横向翻页网页 P
 1. **小耳剪纸风** — 温暖、手作、叙事感，入口 `assets/template.html`，继续按下文 Step 1–7。
 2. **好奇果冻 3D** — 年轻、明亮、设计感，入口 `styles/haoqi-3d/demo.html`，先读 `styles/haoqi-3d/README.md`，基于现有 20 页结构改内容与素材分配。
 
-用户想先看效果时，打开 `style-gallery.html`。新增第三种风格时遵守 `styles/README.md`。
+用户想先看效果时，打开 `style-gallery.html`。新增第三种风格时遵守 `styles/README.md`。用户要把好奇 3D 用于公众号时，读取 `styles/haoqi-3d/wechat/SKILL.md`，并按其引用的微信组件、配图和检查清单执行。
 
 ---
 
