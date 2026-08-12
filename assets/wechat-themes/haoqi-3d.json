@@ -1,0 +1,22 @@
+{
+  "name": "haoqi-3d",
+  "description": "好奇果冻 3D 公众号版：暖象牙底、果冻蓝标题、黏土多巴胺配图与安全的 inline HTML 组件。Three.js 只用于制作/截取素材，不在微信正文中运行。",
+  "container_style": "max-width:677px; margin:0 auto; padding:20px 14px; background:#F5F1E8; font-family:-apple-system,BlinkMacSystemFont,'Helvetica Neue','PingFang SC','Microsoft YaHei',sans-serif;",
+  "tags": {
+    "h1": "display:block; color:#151A22; font-size:22px; font-weight:900; line-height:1.35; letter-spacing:1px; margin:34px 0 18px; padding-left:14px; border-left:7px solid #6D8FF2;",
+    "h2": "display:block; color:#151A22; font-size:18px; font-weight:900; line-height:1.5; margin:34px 0 16px; padding:10px 14px; background:#DCE8F2; border-left:5px solid #F08A5D;",
+    "h3": "display:block; color:#31416F; font-size:16px; font-weight:800; line-height:1.5; margin:26px 0 12px; padding-bottom:7px; border-bottom:2px solid #AABCF2;",
+    "h4": "font-size:14px; font-weight:800; color:#5E6D8D; letter-spacing:1px; margin:22px 0 10px;",
+    "p": "font-size:15px; line-height:1.95; color:#3F4652; margin:16px 0; letter-spacing:0.2px; text-align:justify; word-break:break-word;",
+    "blockquote": "background-image:url({{asset:panel-blue}}); background-size:100% 100%; border:none; padding:24px 22px; margin:26px 4px; color:#FFDAA9; font-size:15px; line-height:1.85;",
+    "strong": "color:#425FC9; font-weight:800; background:linear-gradient(to top,#F6C66B 34%,rgba(255,255,255,0) 34%); padding:0 2px;",
+    "em": "color:#EF7650; font-style:normal; font-weight:700;",
+    "ul": "margin:16px 0; padding-left:24px;",
+    "ol": "margin:16px 0; padding-left:24px;",
+    "li": "font-size:15px; line-height:1.9; color:#3F4652; margin:6px 0;",
+    "a": "color:#425FC9; text-decoration:none; border-bottom:1px dashed #425FC9;",
+    "code": "background:#E5EBF5; color:#425FC9; padding:2px 6px; border-radius:4px; font-size:13px; font-family:Menlo,Consolas,monospace;",
+    "pre": "background:#151A22; color:#DCE8F2; padding:16px; overflow-x:auto; font-size:13px; line-height:1.7;",
+    "hr": "border:0; border-top:2px dashed #B7C4D6; margin:36px 12px;"
+  }
+}

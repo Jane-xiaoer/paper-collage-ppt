@@ -44,15 +44,24 @@ styles/
     ├── demo.html           ← 20 页好奇果冻 3D 示例
     ├── picker.html         ← 3D 素材筛选台
     ├── README.md           ← 使用方法与设计约束
+    ├── wechat/SKILL.md     ← 好奇 3D 卡通公众号工作流
     ├── assets/             ← 风格专属素材
     └── vendor/             ← 本地 Three.js 运行时
 references/                 ← 剪纸风配色 / 布局 / 工艺 / 检查清单
 scripts/export-pptx-editable.py ← 剪纸 HTML → 可编辑 PPTX
 ```
 
-## 公众号工作流(v1.2 新增)
+## 公众号工作流
 
-同一套剪纸语言的公众号排版+配图:两套主题 JSON(`assets/wechat-themes/`,暖色浅底 / **艺术史海报深色版**:深炭底+米卡宋体撕边标题条+藏蓝芥黄砖红)、真纸组件库(`references/wechat-components.md`)、正文图上传脚本(`scripts/upload-body-images.py`)。主题里的 `{{asset:*}}` 占位符用你自己的公众号 CDN 资产替换(生成管线见组件库文档,素材源在姊妹仓 [paper-collage-cardstock](https://github.com/Jane-xiaoer/paper-collage-cardstock))。
+### 剪纸风公众号
+
+同一套剪纸语言的公众号排版+配图：两套主题 JSON（`assets/wechat-themes/`，暖色浅底 / 艺术史海报深色版）、真纸组件库（`references/wechat-components.md`）和正文图上传脚本（`scripts/upload-body-images.py`）。
+
+### 好奇果冻 3D 卡通公众号
+
+读取 [`styles/haoqi-3d/wechat/SKILL.md`](./styles/haoqi-3d/wechat/SKILL.md)。该工作流把 3D Deck 的动态场景转换成微信安全的静态 PNG + inline HTML：Three.js 只用于制作和截取素材，不进入正文；主题为 `assets/wechat-themes/haoqi-3d.json`；组件规则在 `references/haoqi-3d-wechat-components.md`；配图尺寸、语义素材和提示词在 `references/haoqi-3d-wechat-images.md`；交付前运行 `python3 scripts/validate-haoqi-wechat.py article.md`。
+
+所有正文图片都应在发布前用 `scripts/upload-body-images.py` 上传为微信 CDN URL。主题里的 `{{asset:*}}` 占位符使用自己的公众号 CDN 资产替换，不将 AppSecret 写入仓库。
 
 ## 血统
 

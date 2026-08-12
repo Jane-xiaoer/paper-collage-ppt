@@ -28,3 +28,4 @@ styles/
 |---|---|---|
 | `paper-collage` | 小耳剪纸风 | `../assets/template.html` |
 | `haoqi-3d` | 好奇果冻 3D | `./haoqi-3d/demo.html` |
+| `haoqi-3d-wechat` | 好奇果冻 3D · 公众号排版 | `./haoqi-3d/wechat/SKILL.md` |
