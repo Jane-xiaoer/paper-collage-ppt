@@ -20,7 +20,7 @@
 - **20 种布局骨架**:封面 / 目录 / 幕封 / 金句 / 三卡 / 左文右图(.flip 镜像)/ 流程 / 对比 / 数据 / 清单 / 时间轴 / 团队 / 双栏 / 四宫格 / 表格 / 全幅大图 / 问答 / 进度 / 图解 / 收束
 - **剪纸工艺系统**:手剪轮廓纸片、剪贴字标题(每字一张小纸片)、撕纸山景、和纸胶带、订书钉、半调网点、三层纸质感
 - **文字全部真 HTML**:永不乱码;插画由 nano-banana 按「实拍纸艺 diorama」配方生成(可选)
-- **可编辑 PPTX 导出**:`python3 scripts/export-pptx-editable.py deck.html --theme t3`——三层分解(背景/纸片独立图形/真文本框),在 PowerPoint 里改字、挪纸片、拉纸片都行
+- **可编辑 PPTX 导出**：剪纸用 `python3 scripts/export-pptx-editable.py deck.html --theme t3`；好奇 3D 用 `python3 scripts/export-haoqi-pptx-editable.py styles/haoqi-3d/demo.html --scheme plus`。两者均分解为背景、独立素材、原生形状和真文本框。
 
 ## 用法
 
@@ -48,7 +48,8 @@ styles/
     ├── assets/             ← 风格专属素材
     └── vendor/             ← 本地 Three.js 运行时
 references/                 ← 剪纸风配色 / 布局 / 工艺 / 检查清单
-scripts/export-pptx-editable.py ← 剪纸 HTML → 可编辑 PPTX
+scripts/export-pptx-editable.py       ← 剪纸 HTML → 可编辑 PPTX
+scripts/export-haoqi-pptx-editable.py ← 好奇 3D HTML → 可编辑 PPTX
 ```
 
 ## 公众号工作流

@@ -34,6 +34,19 @@ python3 -m http.server 8788 --bind 127.0.0.1
 - URL 参数 `?p=0&s=plus`：指定页码和材质方案
 - URL 参数 `&still=1`：关闭动画，适合截图导出
 
+## 导出可编辑 PPTX
+
+```bash
+python3 scripts/export-haoqi-pptx-editable.py \
+  styles/haoqi-3d/demo.html \
+  -o haoqi-3d-editable.pptx \
+  --scheme plus
+```
+
+支持 `base`、`plus`、`bold` 三档材质。导出结果不是整页截图：DOM 文案为 PowerPoint 真文本框，黏土物件、贴纸与招牌 `hello` 为独立图片对象，网格、卡片、色块和线条尽量转为原生形状；只有 WebGL 环境光影保留为每页底图。
+
+依赖：Python 3、`python-pptx`、Google Chrome；Pillow 可选，用于压缩背景。
+
 ## 结构
 
 ```text
@@ -43,6 +56,7 @@ assets/clay/           # 透明 PNG 黏土素材
 assets/fonts/          # 果冻字路径数据
 assets/stickers/retro/ # 复古贴纸
 vendor/                # 本地 Three.js 与 addons
+../../scripts/export-haoqi-pptx-editable.py # 可编辑 PPTX 导出器
 ```
 
 ## 设计约束

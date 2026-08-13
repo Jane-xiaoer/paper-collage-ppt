@@ -224,6 +224,8 @@
   body.still .sw, body.still .stats .st-i, body.still .scale .row{
     opacity:1!important; transform:none!important; transition:none!important; animation:none!important}
   body.still #prog i{transition:none!important}
+  /* PPTX 三层导出：只保留 WebGL 背景/3D，DOM 文字与素材由导出器拆成可编辑对象。 */
+  body.export-layer #frame,body.export-layer #stk,body.export-layer #txt{display:none!important}
 
   /* ===== 条目两列制（放在最末，避免再被区间替换误删）===== */
   .items{margin-top:4.4vh; display:grid; gap:2.6vh 0; max-width:46vw}
@@ -284,6 +286,8 @@ import { OutputPass }       from 'three/addons/postprocessing/OutputPass.js';
 
 const Q = new URLSearchParams(location.search);
 const still = Q.get('still') === '1';
+const exportLayer = Q.get('export');
+if (exportLayer) document.body.classList.add('export-layer');
 let page = Math.max(+(Q.get('p') ?? 0) || 0, 0);   // 上限在 PAGES 定义后再钳，避免写死页数
 
 /* ============ 材质 × 配色：三档方案（design-director #2.2 规范/进阶/前卫）============
@@ -751,7 +755,8 @@ function renderStickers(key, idx){
 
 /* ============ 场景 ============ */
 const canvas = document.getElementById('cv');
-const renderer = new THREE.WebGLRenderer({ canvas, antialias:true });
+const renderer = new THREE.WebGLRenderer({ canvas, antialias:true, alpha:exportLayer === 'object' });
+if (exportLayer === 'object') renderer.setClearColor(0x000000, 0);
 renderer.setPixelRatio(Math.min(devicePixelRatio, 2));
 renderer.shadowMap.enabled = true;
 renderer.shadowMap.type = THREE.PCFSoftShadowMap;
@@ -802,7 +807,7 @@ bgCacheEnv();
   });
   g.restore();
   const t = new THREE.CanvasTexture(cv); t.colorSpace = THREE.SRGBColorSpace;
-  scene.background = t;
+  if (exportLayer !== 'object') scene.background = t;
 })();
 
 const TARGET = new THREE.Vector3(0,0,0);
@@ -885,6 +890,10 @@ const meshes = PARTS.map((p, i) => {
       SR.clone().normalize(), SU.clone().normalize(), SD.clone().normalize()));
   group.add(m); return m;
 });
+if (exportLayer === 'background') {
+  meshes.forEach(m => { m.visible = false; });
+  floor.visible = false;
+}
 
 /* ============ 文字层 ============ */
 const txt = document.getElementById('txt');
