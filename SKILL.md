@@ -12,9 +12,27 @@ description: 「小耳 PPT 风格馆」——生成多风格横向翻页网页 P
 用户已明确风格就直接进入对应工作流；没有明确时给两个选择：
 
 1. **小耳剪纸风** — 温暖、手作、叙事感，入口 `assets/template.html`，继续按下文 Step 1–7。
-2. **好奇果冻 3D** — 年轻、明亮、设计感，入口 `styles/haoqi-3d/demo.html`，先读 `styles/haoqi-3d/README.md`，基于现有 20 页结构改内容与素材分配。
+2. **好奇果冻 3D** — 年轻、明亮、设计感，入口 `styles/haoqi-3d/demo.html`。先读 `styles/haoqi-3d/README.md` 与 `styles/haoqi-3d/PPTX_EXPORT_PROTOCOL.md`；根据用户内容决定页数，禁止照搬示例的 20 页数量。允许创建新的 Three.js 模型、文字、粒子或导入 GLTF，并按协议注册需要在 PowerPoint 中独立编辑的 3D 对象。
 
 用户想先看效果时，打开 `style-gallery.html`。新增第三种风格时遵守 `styles/README.md`。用户要把好奇 3D 用于公众号时，读取 `styles/haoqi-3d/wechat/SKILL.md`，并按其引用的微信组件、配图和检查清单执行。
+
+## 工作流 B：好奇果冻 3D
+
+1. 按受众、时长与信息量规划页数；不设固定页数，不以 20 页示例作为输出要求。
+2. 从 `styles/haoqi-3d/demo.html` 继承视觉系统和运行时，根据内容增删 `PAGES`。
+3. 自由创建主题所需的 Three.js 对象。对每个需要在 PPTX 中单独移动、缩放或删除的 `THREE.Object3D` 调用 `registerPptx3D(object, id, { pages })`；组整体编辑就注册 Group，部件分开编辑就分别注册。
+4. 保持精确文案为 `#txt` 下的真 HTML，普通素材放入 `#stk` 或 `#txt`，不要把文字烤进 3D 图或背景。
+5. 预览并检查所有页面后，默认同时导出可编辑 PPTX：
+
+```bash
+python3 scripts/export-haoqi-pptx-editable.py path/to/deck.html \
+  -o path/to/deck-editable.pptx --scheme plus
+```
+
+6. 验证 PPTX 页数与 HTML 运行时报告的页数完全一致；确认存在真文本框、独立图片对象和原生形状，并回渲代表页检查视觉。
+7. 同时交付 `deck.html` 与 `deck-editable.pptx`。说明 WebGL 材质与光影属于背景，注册的 3D 主体作为透明独立对象，文字与结构可继续在 PowerPoint 中编辑。
+
+详细协议与扩展示例见 `styles/haoqi-3d/PPTX_EXPORT_PROTOCOL.md`。
 
 ---
 

@@ -1,6 +1,6 @@
 # 好奇果冻 3D · Haoqi Jelly 3D
 
-一套面向设计、创意和年轻化产品演示的 3D 网页 PPT 风格。
+一套面向设计、创意和年轻化产品演示的 3D 网页 PPT 风格。`demo.html` 的 20 页只是示例，不是页数限制；实际 Deck 应根据内容自由增删页面。
 
 ## 视觉语言
 
@@ -43,14 +43,17 @@ python3 scripts/export-haoqi-pptx-editable.py \
   --scheme plus
 ```
 
-支持 `base`、`plus`、`bold` 三档材质。导出结果不是整页截图：DOM 文案为 PowerPoint 真文本框，黏土物件、贴纸与招牌 `hello` 为独立图片对象，网格、卡片、色块和线条尽量转为原生形状；只有 WebGL 环境光影保留为每页底图。
+支持 `base`、`plus`、`bold` 三档材质。导出器从运行时自动发现页数，不限制 20 页。DOM 文案为 PowerPoint 真文本框，黏土物件与贴纸为独立图片对象，网格、卡片、色块和线条尽量转为原生形状；只有 WebGL 环境光影保留为每页底图。
 
-依赖：Python 3、`python-pptx`、Google Chrome；Pillow 可选，用于压缩背景。
+新增 Three.js 模型、文字、粒子或 GLTF 后，按 `PPTX_EXPORT_PROTOCOL.md` 调用 `registerPptx3D(...)`，即可将任意 3D 主体拆成独立透明 PowerPoint 对象。未注册的 3D 场景内容会留在背景中。
+
+依赖：Python 3、`python-pptx`、Google Chrome；导出独立 3D 对象时需要 Pillow。
 
 ## 结构
 
 ```text
-demo.html              # 20 页完整示例
+demo.html              # 20 页示例（实际页数自由）
+PPTX_EXPORT_PROTOCOL.md # 动态页数与自定义 3D 对象导出协议
 picker.html            # 48 件黏土素材 + 9 件复古贴纸筛选台
 assets/clay/           # 透明 PNG 黏土素材
 assets/fonts/          # 果冻字路径数据
