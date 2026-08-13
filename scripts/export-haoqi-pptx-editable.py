@@ -2,17 +2,21 @@
 """Export Haoqi 3D HTML deck to a layered, editable PPTX.
 
 Layers per slide:
-  1. WebGL-only background/lighting/jelly word (one background image)
-  2. CSS panels, guide lines and swatches (native PowerPoint shapes)
-  3. Clay/sticker PNGs (independent movable picture objects)
-  4. DOM copy (real editable PowerPoint text boxes)
+  1. WebGL environment, lighting and unregistered scenery (one background image)
+  2. Registered Three.js objects (independent transparent picture objects)
+  3. CSS panels, guide lines and swatches (native PowerPoint shapes)
+  4. Clay/sticker PNGs (independent movable picture objects)
+  5. DOM copy (real editable PowerPoint text boxes)
+
+The deck runtime reports its own page count and registered 3D objects through
+window.__PPTX_EXPORT__; no slide count or object identity is hard-coded here.
 
 Usage:
   python3 scripts/export-haoqi-pptx-editable.py styles/haoqi-3d/demo.html \
       -o haoqi-3d-editable.pptx --scheme plus
 """
 import argparse, base64, contextlib, http.server, json, re, socketserver
-import subprocess, tempfile, threading, time, urllib.parse
+import subprocess, tempfile, threading, urllib.parse
 from pathlib import Path
 
 CHROME = "/Applications/Google Chrome.app/Contents/MacOS/Google Chrome"
@@ -51,7 +55,11 @@ COLLECT = r"""
   shapes.push({kind:'rect',x:r.left,y:r.top,w:r.width,h:r.height,rot:angle(el),bg:bg,border:bc,bw:bw,alpha:parseFloat(cs.opacity)||1,radius:parseFloat(cs.borderRadius)||0});
  }
  const rootBg=rgb(getComputedStyle(document.body).backgroundColor);
- const data={texts,images,shapes,rootBg}; const pre=document.createElement('pre');pre.id='__hxout';
+ const api=window.__PPTX_EXPORT__;
+ const current=+(new URLSearchParams(location.search).get('p')||0);
+ const exportMeta={pageCount:api?.pageCount?.()||document.querySelectorAll('[data-slide],.slide').length||1,
+   objects:api?.objectsForPage?.(current)||[]};
+ const data={texts,images,shapes,rootBg,exportMeta}; const pre=document.createElement('pre');pre.id='__hxout';
  pre.textContent=btoa(unescape(encodeURIComponent(JSON.stringify(data))));document.body.appendChild(pre);document.title='HXREADY';
 })();
 </script>
@@ -84,19 +92,31 @@ def main():
     from pptx.enum.text import PP_ALIGN,MSO_ANCHOR
     from pptx.enum.shapes import MSO_SHAPE
     from pptx.dml.color import RGBColor
-    deck=Path(args.deck).resolve(); root=deck.parents[2]; rel=deck.relative_to(root)
-    html=deck.read_text(); n=len(re.findall(r"\{ T:'[A-E]'",html)); assert n==20,f'expected 20 pages, got {n}'
-    injected=html.replace('</body>',COLLECT+'</body>'); probe=deck.with_name('.export-probe.html');probe.write_text(injected)
+    deck=Path(args.deck).resolve()
+    # Serve from a stable common project root while still allowing nested/custom decks.
+    cwd=Path.cwd().resolve()
+    root=cwd if deck.is_relative_to(cwd) else next((p for p in deck.parents if (p/'scripts'/'export-haoqi-pptx-editable.py').exists()),deck.parent)
+    rel=deck.relative_to(root)
+    html=deck.read_text(); injected=html.replace('</body>',COLLECT+'</body>'); probe=deck.with_name('.export-probe.html');probe.write_text(injected)
     td=Path(tempfile.mkdtemp(prefix='haoqi-pptx-')); pages=[]; backgrounds=[]; objects=[]
     try:
       with server(root) as port:
        probe_rel=probe.relative_to(root)
+       meta_url=f'http://127.0.0.1:{port}/{probe_rel}?p=0&still=1&s={args.scheme}'
+       first=chrome([f'--window-size={VW},{VH}','--virtual-time-budget=7000','--dump-dom',meta_url])
+       mm=re.search(rb'id="__hxout">([A-Za-z0-9+/=]+)<',first.stdout or b'')
+       if not mm: raise SystemExit('ERROR: deck metadata extraction failed; ensure the HTML closes with </body>')
+       first_data=json.loads(base64.b64decode(mm.group(1)));n=int(first_data.get('exportMeta',{}).get('pageCount',0))
+       if n < 1: raise SystemExit('ERROR: deck reports zero pages')
+       print(f'  ✓ discovered {n} slide(s) from runtime metadata')
        for i in range(n):
         base=f'http://127.0.0.1:{port}/{probe_rel}?p={i}&still=1&s={args.scheme}'
         r=chrome([f'--window-size={VW},{VH}','--virtual-time-budget=7000','--dump-dom',base])
         m=re.search(rb'id="__hxout">([A-Za-z0-9+/=]+)<',r.stdout or b'')
         if not m: raise SystemExit(f'ERROR: page {i+1} DOM extraction failed')
-        pages.append(json.loads(base64.b64decode(m.group(1))))
+        pages.append(first_data if i==0 else json.loads(base64.b64decode(m.group(1))))
+        reported=int(pages[-1].get('exportMeta',{}).get('pageCount',n))
+        if reported != n: raise SystemExit(f'ERROR: page count changed during export ({n} → {reported})')
         bg=td/f'bg-{i+1:02d}.png'; url=f'http://127.0.0.1:{port}/{rel}?p={i}&still=1&s={args.scheme}&export=background'
         chrome([f'--window-size={VW},{VH}','--virtual-time-budget=6500',f'--screenshot={bg}',url])
         if not bg.exists(): raise SystemExit(f'ERROR: page {i+1} WebGL background failed')
@@ -105,16 +125,19 @@ def main():
           jpg=bg.with_suffix('.jpg');Image.open(bg).convert('RGB').save(jpg,'JPEG',quality=88);bg.unlink();bg=jpg
         except ImportError: pass
         backgrounds.append(bg)
-        obj=None
-        if i in (0,9):
-          raw=td/f'obj-{i+1:02d}-raw.png'; objurl=f'http://127.0.0.1:{port}/{rel}?p={i}&still=1&s={args.scheme}&export=object'
+        page_objects=[]
+        for oi,obj_id in enumerate(pages[-1].get('exportMeta',{}).get('objects',[])):
+          raw=td/f'obj-{i+1:03d}-{oi:02d}-raw.png'; qobj=urllib.parse.quote(str(obj_id),safe='')
+          objurl=f'http://127.0.0.1:{port}/{rel}?p={i}&still=1&s={args.scheme}&export=object&object={qobj}'
           chrome([f'--window-size={VW},{VH}','--virtual-time-budget=6500',f'--screenshot={raw}',objurl])
           if raw.exists():
-           from PIL import Image
-           im=Image.open(raw).convert('RGBA'); alpha=im.getchannel('A'); box=alpha.getbbox()
+           try:
+            from PIL import Image
+           except ImportError: raise SystemExit('ERROR: Pillow is required when exporting independent 3D objects')
+           im=Image.open(raw).convert('RGBA'); box=im.getchannel('A').getbbox()
            if box:
-            crop=im.crop(box); obj=td/f'obj-{i+1:02d}.png';crop.save(obj);obj=(obj,box)
-        objects.append(obj);print(f'  ✓ capture {i+1:02d}/{n}: {len(pages[-1]["texts"])} text · {len(pages[-1]["images"])} image · {len(pages[-1]["shapes"])} shape')
+            obj=td/f'obj-{i+1:03d}-{oi:02d}.png';im.crop(box).save(obj);page_objects.append((obj,box,str(obj_id)))
+        objects.append(page_objects);print(f'  ✓ capture {i+1:03d}/{n}: {len(pages[-1]["texts"])} text · {len(pages[-1]["images"])} DOM image · {len(page_objects)} 3D object · {len(pages[-1]["shapes"])} shape')
     finally: probe.unlink(missing_ok=True)
 
     prs=Presentation();prs.slide_width=Emu(12192000);prs.slide_height=Emu(6858000);blank=prs.slide_layouts[6]
@@ -125,9 +148,10 @@ def main():
       slide=prs.slides.add_slide(blank)
       bgc=rgba(data.get('rootBg'),(191,221,240,1));fill=slide.background.fill;fill.solid();fill.fore_color.rgb=RGBColor(*map(int,bgc[:3]))
       slide.shapes.add_picture(str(backgrounds[si]),0,0,width=prs.slide_width,height=prs.slide_height);counts['background']+=1
-      if objects[si]:
-       obj,box=objects[si]; x0,y0,x1,y1=box
-       slide.shapes.add_picture(str(obj),Emu(int(x0*EMU_PER_PX)),Emu(int(y0*EMU_PER_PX)),width=Emu(int((x1-x0)*EMU_PER_PX)),height=Emu(int((y1-y0)*EMU_PER_PX)));counts['image']+=1
+      for obj,box,obj_id in objects[si]:
+       x0,y0,x1,y1=box
+       pic=slide.shapes.add_picture(str(obj),Emu(int(x0*EMU_PER_PX)),Emu(int(y0*EMU_PER_PX)),width=Emu(int((x1-x0)*EMU_PER_PX)),height=Emu(int((y1-y0)*EMU_PER_PX)))
+       pic.name=f'3D: {obj_id}';counts['image']+=1
       for sh in data['shapes']:
        if sh['kind']=='cross':
         for x,y,w,h in [(sh['x']+sh['w']/2,sh['y'],1,sh['h']),(sh['x'],sh['y']+sh['h']/2,sh['w'],1)]:

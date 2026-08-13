@@ -287,8 +287,21 @@ import { OutputPass }       from 'three/addons/postprocessing/OutputPass.js';
 const Q = new URLSearchParams(location.search);
 const still = Q.get('still') === '1';
 const exportLayer = Q.get('export');
+const exportObject = Q.get('object');
 if (exportLayer) document.body.classList.add('export-layer');
 let page = Math.max(+(Q.get('p') ?? 0) || 0, 0);   // 上限在 PAGES 定义后再钳，避免写死页数
+
+/* 可编辑 PPTX 导出协议：新增任意 Three.js Object3D 后调用
+   registerPptx3D(object, 'stable-id', { pages:[0,2,5] })。
+   pages 省略代表所有页面；导出器会逐页发现并拆成独立透明图片。 */
+const PPTX_3D_OBJECTS = [];
+function registerPptx3D(object, id, { pages=null }={}) {
+  if (!object?.isObject3D) throw new TypeError('registerPptx3D: object must be THREE.Object3D');
+  if (!id || PPTX_3D_OBJECTS.some(x => x.id === id)) throw new Error(`registerPptx3D: duplicate/empty id "${id}"`);
+  PPTX_3D_OBJECTS.push({ object, id, pages });
+  return object;
+}
+window.registerPptx3D = registerPptx3D;
 
 /* ============ 材质 × 配色：三档方案（design-director #2.2 规范/进阶/前卫）============
    同一版型下切换，不改布局、不改版式骨架。 */
@@ -890,10 +903,28 @@ const meshes = PARTS.map((p, i) => {
       SR.clone().normalize(), SU.clone().normalize(), SD.clone().normalize()));
   group.add(m); return m;
 });
-if (exportLayer === 'background') {
-  meshes.forEach(m => { m.visible = false; });
-  floor.visible = false;
-}
+// 当前示例的果冻招牌出现在第 1、10 页；新 3D 对象按同一协议注册即可。
+registerPptx3D(meshes[0], 'jelly-hello', { pages:[0,9] });
+
+window.__PPTX_EXPORT__ = {
+  version: 1,
+  pageCount: () => PAGES.length,
+  objectsForPage: i => PPTX_3D_OBJECTS.filter(x => !x.pages || x.pages.includes(i)).map(x => x.id),
+  apply: i => {
+    if (!exportLayer) return;
+    const active = PPTX_3D_OBJECTS.filter(x => !x.pages || x.pages.includes(i));
+    if (exportLayer === 'background') {
+      PPTX_3D_OBJECTS.forEach(x => { x.object.visible = false; });
+      return;
+    }
+    if (exportLayer === 'object') {
+      const chosen = active.find(x => x.id === exportObject);
+      const visible = new Set();
+      if (chosen) chosen.object.traverse(x => visible.add(x));
+      scene.traverse(x => { if (x.isMesh || x.isPoints || x.isLine) x.visible = visible.has(x); });
+    }
+  }
+};
 
 /* ============ 文字层 ============ */
 const txt = document.getElementById('txt');
@@ -926,6 +957,7 @@ function renderPage(i){
   document.querySelector('#prog i').style.width = ((i+1)/PAGES.length*100).toFixed(1)+'%';
   renderStickers(p.L, i);
   rebuildWord(p.L);
+  window.__PPTX_EXPORT__.apply(i);
   requestAnimationFrame(()=>requestAnimationFrame(()=>txt.classList.add('go')));
 }
 const schemeBox = document.getElementById('b-scheme');
